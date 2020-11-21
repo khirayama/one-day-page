@@ -117,6 +117,7 @@ export class Data {
   }
 
   private save(): void {
+    // TODO: save this.data as json file
     window.localStorage.setItem('__data', JSON.stringify(this.data));
   }
 
