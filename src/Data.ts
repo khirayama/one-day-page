@@ -22,8 +22,7 @@ export class Data {
   constructor(config: Config) {
     this.config = config;
 
-    const tmp = window.localStorage.getItem('__data');
-    this.data = tmp ? JSON.parse(tmp) : this.data;
+    this.load();
   }
 
   public onChange(callback: Function) {
@@ -110,6 +109,11 @@ export class Data {
     }
 
     return options;
+  }
+
+  private load(): void {
+    const tmp = window.localStorage.getItem('__data');
+    this.data = tmp ? JSON.parse(tmp) : this.data;
   }
 
   private save(): void {
