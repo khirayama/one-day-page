@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Config, SelectOption, SelectRelation } from './config';
 
 // TODO: Support unique
-// TODO: Support delete
+// TODO: Support now button for date and datetime
 const req = axios.create({
   baseURL: 'http://localhost:3000',
 });
@@ -40,7 +40,7 @@ export class Data {
     return this.data;
   }
 
-  public createRow(resourceName: string): void {
+  public create(resourceName: string): void {
     if (!this.data[resourceName]) {
       this.data[resourceName] = [];
     }
@@ -119,6 +119,16 @@ export class Data {
         }
       }
     }
+
+    this.save();
+    this.emitChange();
+  }
+
+  public delete(resourceName: string, id: string): void {
+    const rows = this.data[resourceName];
+    this.data[resourceName] = rows.filter((row) => {
+      return row.id !== id;
+    });
 
     this.save();
     this.emitChange();

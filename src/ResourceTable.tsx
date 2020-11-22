@@ -49,7 +49,7 @@ export class ResourceTable extends React.Component<ResourceTableProps> {
   }
 
   public onAddButtonClick() {
-    this.props.action.createRow(this.props.resourceName);
+    this.props.action.create(this.props.resourceName);
   }
 
   public render() {
@@ -62,6 +62,7 @@ export class ResourceTable extends React.Component<ResourceTableProps> {
         <table>
           <thead>
             <tr>
+              <th></th>
               {Object.keys(scheme.attributes).map((key) => {
                 return <th key={key}>{key}</th>;
               })}

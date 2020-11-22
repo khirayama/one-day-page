@@ -26,8 +26,9 @@ export class ResourceEditor extends React.Component<ResourceEditorProps, DataTyp
 
     this.state = this.props.data.toJSON();
     this.action = {
-      createRow: this.props.data.createRow.bind(this.props.data),
+      create: this.props.data.create.bind(this.props.data),
       update: this.props.data.update.bind(this.props.data),
+      delete: this.props.data.delete.bind(this.props.data),
     };
   }
 

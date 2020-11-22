@@ -9,10 +9,6 @@ import { Action } from './ResourceEditor';
 const Wrapper = styled.td`
   border: solid 1px #ccc;
 
-  &:first-of-type {
-    border-left: 0;
-  }
-
   &:last-of-type {
     border-right: 0;
   }
@@ -54,7 +50,7 @@ const Wrapper = styled.td`
   }
 
   &.disabled {
-    background: #ddd;
+    color: #aaa;
   }
 `;
 
