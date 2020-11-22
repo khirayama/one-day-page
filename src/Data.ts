@@ -1,7 +1,12 @@
 import * as uuid from 'uuid';
 import dayjs from 'dayjs';
+import axios from 'axios';
 
 import { Config, SelectOption, SelectRelation } from './config';
+
+const req = axios.create({
+  baseURL: 'http://localhost:3000',
+});
 
 export type ResourceRow = {
   id: string;
@@ -112,17 +117,16 @@ export class Data {
   }
 
   private load(): void {
-    const tmp = window.localStorage.getItem('__data');
-    this.data = tmp ? JSON.parse(tmp) : this.data;
+    req.get('/resources').then((res) => {
+      this.data = res.data.resources;
+      this.emitChange();
+    });
   }
 
   private save(): void {
-    // TODO: save this.data as json file
-    window.localStorage.setItem('__data', JSON.stringify(this.data));
-  }
-
-  private clear(): void {
-    window.localStorage.removeItem('__data');
+    req.put('/resources', {
+      data: this.data,
+    });
   }
 
   private emitChange() {
