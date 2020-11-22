@@ -41,6 +41,11 @@ module.exports = (env, argv) => {
       minimize: isProd,
     },
     devtool: isProd ? false : 'inline-source-map',
+    devServer: {
+      before: () => {
+        require(path.resolve(__dirname, 'src', 'server'));
+      },
+    },
   };
 
   return config;
