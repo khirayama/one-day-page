@@ -6,7 +6,6 @@ import { Config, SelectOption, SelectRelation } from './config';
 
 // TODO Support unique
 // TODO Support delete with relations
-// TODO Support now button for date and datetime
 const req = axios.create({
   baseURL: 'http://localhost:3000',
 });
@@ -67,11 +66,11 @@ export class Data {
           break;
         }
         case 'date': {
-          row[key] = dayjs(now).format('YYYY/MM/DD');
+          row[key] = dayjs(now).format('YYYY-MM-DD');
           break;
         }
         case 'datetime': {
-          row[key] = dayjs(now).format('YYYY/MM/DD/hh:mm:ss Z');
+          row[key] = dayjs(now).format('YYYY-MM-DD hh:mm:ss Z');
           break;
         }
         case 'select': {

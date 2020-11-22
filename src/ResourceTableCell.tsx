@@ -75,6 +75,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
     };
 
     this.onInputChange = this.onInputChange.bind(this);
+    this.onNowButtonClick = this.onNowButtonClick.bind(this);
   }
 
   public componentDidUpdate() {
@@ -86,6 +87,16 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
   public onInputChange(event: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
     const el = event.currentTarget;
     const value: string | number | boolean = el.type === 'checkbox' ? (el as HTMLInputElement).checked : el.value;
+    this.setState({ value });
+    this.props.action.update(this.props.resourceName, this.props.row.id, this.props.attributeName, value);
+  }
+
+  public onNowButtonClick() {
+    const attribute = this.props.attribute;
+    const now = new Date();
+    const inputType = attribute.type;
+    const value = inputType === 'date' ? dayjs(now).format('YYYY-MM-DD') : dayjs(now).format('YYYY-MM-DD hh:mm:ss Z');
+
     this.setState({ value });
     this.props.action.update(this.props.resourceName, this.props.row.id, this.props.attributeName, value);
   }
@@ -133,23 +144,29 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
       }
       case 'date': {
         content = (
-          <input
-            type="date"
-            disabled={attribute.readOnly}
-            value={dayjs(this.state.value as string).format('YYYY-MM-DD')}
-            onChange={this.onInputChange}
-          />
+          <>
+            <input
+              type="date"
+              disabled={attribute.readOnly}
+              value={dayjs(this.state.value as string).format('YYYY-MM-DD')}
+              onChange={this.onInputChange}
+            />
+            <div onClick={this.onNowButtonClick}>Now</div>
+          </>
         );
         break;
       }
       case 'datetime': {
         content = (
-          <input
-            type="datetime-local"
-            disabled={attribute.readOnly}
-            value={dayjs(this.state.value as string).format('YYYY-MM-DDTHH:mm')}
-            onChange={this.onInputChange}
-          />
+          <>
+            <input
+              type="datetime-local"
+              disabled={attribute.readOnly}
+              value={dayjs(this.state.value as string).format('YYYY-MM-DDTHH:mm')}
+              onChange={this.onInputChange}
+            />
+            <div onClick={this.onNowButtonClick}>Now</div>
+          </>
         );
         break;
       }
