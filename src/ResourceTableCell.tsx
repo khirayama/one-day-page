@@ -77,10 +77,15 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
     this.onInputChange = this.onInputChange.bind(this);
   }
 
+  public componentDidUpdate(prevProps: ResourceTableCellProps) {
+    if (this.props.attribute.type === 'select' && this.props.row[this.props.attributeName] !== this.state.value) {
+      this.setState({ value: this.props.row[this.props.attributeName] });
+    }
+  }
+
   public onInputChange(event: React.FormEvent<HTMLInputElement | HTMLSelectElement>) {
     const el = event.currentTarget;
     const value: string | number | boolean = el.type === 'checkbox' ? (el as HTMLInputElement).checked : el.value;
-    console.log(value);
     this.setState({ value });
     this.props.action.update(this.props.resourceName, this.props.row.id, this.props.attributeName, value);
   }
@@ -131,7 +136,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
       case 'select': {
         const options = attribute.options || [];
         content = (
-          <select onChange={this.onInputChange}>
+          <select onChange={this.onInputChange} value={String(this.state.value)}>
             {options.map((option: SelectOption) => (
               <option key={option.value} value={option.value}>
                 {option.label}

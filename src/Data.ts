@@ -86,12 +86,35 @@ export class Data {
   }
 
   public update(resourceName: string, id: string, attributeName: string, value: string | number | boolean): void {
+    let prevValue = null;
+
     this.data[resourceName][attributeName] = value;
     const rows = this.data[resourceName];
     for (const row of rows) {
       if (row.id === id) {
+        prevValue = row[attributeName];
         row[attributeName] = value;
         break;
+      }
+    }
+
+    for (const schemeKey of Object.keys(this.config.resources)) {
+      const scheme = this.config.resources[schemeKey].attributes;
+
+      for (const attrKey of Object.keys(scheme)) {
+        const attr = scheme[attrKey];
+        if (
+          attr.type === 'select' &&
+          attr.relation &&
+          attr.relation.resource === resourceName &&
+          attr.relation.value === attributeName
+        ) {
+          for (const row of this.data[schemeKey]) {
+            if (row[attr.relation.value] === prevValue) {
+              row[attr.relation.value] = value;
+            }
+          }
+        }
       }
     }
 
