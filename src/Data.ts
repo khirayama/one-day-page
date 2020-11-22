@@ -6,7 +6,6 @@ import { Config, SelectOption, SelectRelation } from './config';
 
 // TODO: Support unique
 // TODO: Support delete
-// TODO: Support readonly
 const req = axios.create({
   baseURL: 'http://localhost:3000',
 });
