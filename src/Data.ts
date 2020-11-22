@@ -4,8 +4,9 @@ import axios from 'axios';
 
 import { Config, SelectOption, SelectRelation } from './config';
 
-// TODO: Support unique
-// TODO: Support now button for date and datetime
+// TODO Support unique
+// TODO Support delete with relations
+// TODO Support now button for date and datetime
 const req = axios.create({
   baseURL: 'http://localhost:3000',
 });
