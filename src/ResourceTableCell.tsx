@@ -77,7 +77,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
     this.onInputChange = this.onInputChange.bind(this);
   }
 
-  public componentDidUpdate(prevProps: ResourceTableCellProps) {
+  public componentDidUpdate() {
     if (this.props.attribute.type === 'select' && this.props.row[this.props.attributeName] !== this.state.value) {
       this.setState({ value: this.props.row[this.props.attributeName] });
     }
