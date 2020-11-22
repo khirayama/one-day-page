@@ -2,9 +2,8 @@ import * as uuid from 'uuid';
 import dayjs from 'dayjs';
 import axios from 'axios';
 
-import { Config, SelectOption, SelectRelation } from './config';
+import { Config, ResourceScheme, SelectOption, SelectRelation } from './config';
 
-// TODO Support unique
 // TODO Support delete with relations
 const req = axios.create({
   baseURL: 'http://localhost:3000',
@@ -83,12 +82,16 @@ export class Data {
 
     this.data[resourceName].push(row);
 
-    this.save();
+    const result = this.valid(resourceName, scheme, row);
+    if (result.isValid) {
+      this.save();
+    }
     this.emitChange();
   }
 
   public update(resourceName: string, id: string, attributeName: string, value: string | number | boolean): void {
     let prevValue = null;
+    let isValid = true;
 
     this.data[resourceName][attributeName] = value;
     const rows = this.data[resourceName];
@@ -96,6 +99,8 @@ export class Data {
       if (row.id === id) {
         prevValue = row[attributeName];
         row[attributeName] = value;
+        const result = this.valid(resourceName, this.config.resources[resourceName], row);
+        isValid = isValid && result.isValid;
         break;
       }
     }
@@ -120,7 +125,11 @@ export class Data {
       }
     }
 
-    this.save();
+    if (isValid) {
+      this.save();
+    } else {
+      console.log('unvalid');
+    }
     this.emitChange();
   }
 
@@ -168,5 +177,36 @@ export class Data {
     this.callbacks.forEach((callback) => {
       callback(this);
     });
+  }
+
+  private valid(
+    resourceName: string,
+    scheme: ResourceScheme,
+    row: ResourceRow,
+  ): { isValid: true } | { isValid: false; attributeName: string; message: string } {
+    const attributeNames = Object.keys(scheme.attributes);
+
+    // unique
+    for (const attributeName of attributeNames) {
+      const attribute = scheme.attributes[attributeName];
+
+      if (attribute.unique) {
+        const rows = this.data[resourceName];
+        for (const r of rows) {
+          if (r[attributeName] === row[attributeName] && r.id !== row.id) {
+            console.log(r[attributeName], row[attributeName]);
+            console.log('error');
+            return {
+              isValid: false,
+              attributeName,
+              message: 'ununique value',
+            };
+          }
+        }
+      }
+    }
+    return {
+      isValid: true,
+    };
   }
 }

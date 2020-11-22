@@ -151,7 +151,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
               value={dayjs(this.state.value as string).format('YYYY-MM-DD')}
               onChange={this.onInputChange}
             />
-            <div onClick={this.onNowButtonClick}>Now</div>
+            {attribute.readOnly ? null : <button onClick={this.onNowButtonClick}>Now</button>}
           </>
         );
         break;
@@ -165,7 +165,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
               value={dayjs(this.state.value as string).format('YYYY-MM-DDTHH:mm')}
               onChange={this.onInputChange}
             />
-            <div onClick={this.onNowButtonClick}>Now</div>
+            {attribute.readOnly ? null : <button onClick={this.onNowButtonClick}>Now</button>}
           </>
         );
         break;
