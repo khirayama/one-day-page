@@ -52,6 +52,10 @@ const Wrapper = styled.td`
       }
     }
   }
+
+  &.disabled {
+    background: #ddd;
+  }
 `;
 
 type ResourceTableCellProps = {
@@ -97,18 +101,36 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
     switch (attribute.type) {
       case 'text': {
         content = (
-          <input type="text" value={String(this.state.value)} placeholder="Text" onChange={this.onInputChange} />
+          <input
+            type="text"
+            disabled={attribute.readOnly}
+            value={String(this.state.value)}
+            placeholder="Text"
+            onChange={this.onInputChange}
+          />
         );
         break;
       }
       case 'number': {
-        content = <input type="number" value={this.state.value as number} onChange={this.onInputChange} />;
+        content = (
+          <input
+            type="number"
+            disabled={attribute.readOnly}
+            value={this.state.value as number}
+            onChange={this.onInputChange}
+          />
+        );
         break;
       }
       case 'boolean': {
         content = (
           <div className="checkbox-wrapper">
-            <input type="checkbox" checked={this.state.value as boolean} onChange={this.onInputChange} />
+            <input
+              type="checkbox"
+              disabled={attribute.readOnly}
+              checked={this.state.value as boolean}
+              onChange={this.onInputChange}
+            />
           </div>
         );
         break;
@@ -117,6 +139,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
         content = (
           <input
             type="date"
+            disabled={attribute.readOnly}
             value={dayjs(this.state.value as string).format('YYYY-MM-DD')}
             onChange={this.onInputChange}
           />
@@ -127,6 +150,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
         content = (
           <input
             type="datetime-local"
+            disabled={attribute.readOnly}
             value={dayjs(this.state.value as string).format('YYYY-MM-DDTHH:mm')}
             onChange={this.onInputChange}
           />
@@ -136,7 +160,7 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
       case 'select': {
         const options = attribute.options || [];
         content = (
-          <select onChange={this.onInputChange} value={String(this.state.value)}>
+          <select onChange={this.onInputChange} disabled={attribute.readOnly} value={String(this.state.value)}>
             {options.map((option: SelectOption) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -148,6 +172,6 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
       }
     }
 
-    return <Wrapper>{content}</Wrapper>;
+    return <Wrapper className={attribute.readOnly ? 'disabled' : ''}>{content}</Wrapper>;
   }
 }

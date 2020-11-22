@@ -22,25 +22,31 @@ export type Attribute =
       type: 'text';
       default?: string;
       auto?: boolean;
+      readOnly?: boolean;
     }
   | {
       type: 'number';
       default?: number;
+      readOnly?: boolean;
     }
   | {
       type: 'boolean';
       default?: boolean;
+      readOnly?: boolean;
     }
   | {
       type: 'date';
+      readOnly?: boolean;
     }
   | {
       type: 'datetime';
+      readOnly?: boolean;
     }
   | {
       type: 'select';
       options?: SelectOption[];
       relation?: SelectRelation;
+      readOnly?: boolean;
     };
 
 export type ResourceScheme = {
@@ -49,6 +55,7 @@ export type ResourceScheme = {
     id: {
       type: 'text';
       auto: true;
+      readOnly: true;
     };
     [key: string]: Attribute;
   };
@@ -68,12 +75,14 @@ const config: Config = {
         id: {
           type: 'text',
           auto: true,
+          readOnly: true,
         },
         key: {
           type: 'text',
         },
         createdAt: {
           type: 'datetime',
+          readOnly: true,
         },
         updatedAt: {
           type: 'datetime',
@@ -86,6 +95,7 @@ const config: Config = {
         id: {
           type: 'text',
           auto: true,
+          readOnly: true,
         },
         key: {
           type: 'select',

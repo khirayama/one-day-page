@@ -40,6 +40,7 @@ export const ResetStyle = styled.createGlobalStyle`
     margin: 0;
     padding: 0;
     outline: 0;
+    border-spacing: 0;
     border: 0;
     border-radius: 0;
     font-weight: inherit;
@@ -102,5 +103,6 @@ export const ResetStyle = styled.createGlobalStyle`
   button {
     font-size: inherit;
     color: inherit;
+    background: transparent;
   }
 `;
