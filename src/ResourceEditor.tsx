@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { Config, SelectRelation } from './config';
-import { Data, DataType } from './Data';
+import { Data, DataType, ValidationError } from './Data';
 import { ResourceTable } from './ResourceTable';
 
 const Wrapper = styled.div`
@@ -18,13 +18,17 @@ type ResourceEditorProps = {
   data: Data;
 };
 
-export class ResourceEditor extends React.Component<ResourceEditorProps, DataType> {
+export class ResourceEditor extends React.Component<
+  ResourceEditorProps,
+  { resources: DataType; errors: ValidationError }
+> {
   public action: Action = {};
 
   constructor(props: ResourceEditorProps) {
     super(props);
 
     this.state = this.props.data.toJSON();
+
     this.action = {
       create: this.props.data.create.bind(this.props.data),
       update: this.props.data.update.bind(this.props.data),
@@ -48,7 +52,8 @@ export class ResourceEditor extends React.Component<ResourceEditorProps, DataTyp
           <ResourceTable
             resourceName={resourceName}
             scheme={scheme}
-            rows={this.state[resourceName] || []}
+            rows={this.state.resources[resourceName] || []}
+            errors={this.state.errors[resourceName] || {}}
             action={this.action}
           />
         </Wrapper>

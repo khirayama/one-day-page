@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { ResourceScheme } from './config';
-import { ResourceRow } from './Data';
+import { ResourceRow, ValidationError } from './Data';
 import { ResourceTableRow } from './ResourceTableRow';
 import { Action } from './ResourceEditor';
 
@@ -37,6 +37,7 @@ type ResourceTableProps = {
   resourceName: string;
   scheme: ResourceScheme;
   rows: ResourceRow[];
+  errors: ValidationError['resourceName'];
   action: Action;
 };
 
@@ -73,6 +74,7 @@ export class ResourceTable extends React.Component<ResourceTableProps> {
                 <ResourceTableRow
                   key={row.id}
                   resourceName={this.props.resourceName}
+                  error={this.props.errors[row.id] || null}
                   row={row}
                   scheme={scheme}
                   action={this.props.action}

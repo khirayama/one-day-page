@@ -9,6 +9,19 @@ const req = axios.create({
   baseURL: 'http://localhost:3000',
 });
 
+export type ValidationError = {
+  [resourceName: string]: {
+    [id: string]: {
+      attributeName: string;
+      message: string;
+    };
+  };
+};
+
+export type ValidationResult =
+  | { isValid: true; resourceName: string; id: string }
+  | { isValid: false; resourceName: string; id: string; attributeName: string; message: string };
+
 export type ResourceRow = {
   id: string;
   [key: string]: string | number | boolean;
@@ -23,6 +36,8 @@ export class Data {
 
   private config: Config;
 
+  private errors: ValidationError = {};
+
   private callbacks: Function[] = [];
 
   constructor(config: Config) {
@@ -35,8 +50,11 @@ export class Data {
     this.callbacks.push(callback);
   }
 
-  public toJSON(): DataType {
-    return this.data;
+  public toJSON(): { errors: ValidationError; resources: DataType } {
+    return {
+      errors: this.errors,
+      resources: this.data,
+    };
   }
 
   public create(resourceName: string): void {
@@ -83,7 +101,8 @@ export class Data {
     this.data[resourceName].push(row);
 
     const result = this.valid(resourceName, scheme, row);
-    if (result.isValid) {
+    const isValid = this.registerError(result);
+    if (isValid) {
       this.save();
     }
     this.emitChange();
@@ -91,41 +110,51 @@ export class Data {
 
   public update(resourceName: string, id: string, attributeName: string, value: string | number | boolean): void {
     let prevValue = null;
-    let isValid = true;
 
     this.data[resourceName][attributeName] = value;
     const rows = this.data[resourceName];
     for (const row of rows) {
       if (row.id === id) {
-        prevValue = row[attributeName];
-        row[attributeName] = value;
-        const result = this.valid(resourceName, this.config.resources[resourceName], row);
-        isValid = isValid && result.isValid;
+        const result = this.valid(resourceName, this.config.resources[resourceName], {
+          ...row,
+          [attributeName]: value,
+        });
+        const isValid = this.registerError(result);
+        if (isValid) {
+          prevValue = row[attributeName];
+          row[attributeName] = value;
+        }
         break;
       }
     }
 
-    for (const schemeKey of Object.keys(this.config.resources)) {
-      const scheme = this.config.resources[schemeKey].attributes;
+    const hasError = !!Object.keys(this.data)
+      .map((resourceName) => {
+        const errors = this.errors[resourceName] || {};
+        return !!Object.keys(errors).length;
+      })
+      .filter((i) => i).length;
+    if (!hasError) {
+      for (const schemeKey of Object.keys(this.config.resources)) {
+        const scheme = this.config.resources[schemeKey].attributes;
 
-      for (const attrKey of Object.keys(scheme)) {
-        const attr = scheme[attrKey];
-        if (
-          attr.type === 'select' &&
-          attr.relation &&
-          attr.relation.resource === resourceName &&
-          attr.relation.value === attributeName
-        ) {
-          for (const row of this.data[schemeKey]) {
-            if (row[attr.relation.value] === prevValue) {
-              row[attr.relation.value] = value;
+        for (const attrKey of Object.keys(scheme)) {
+          const attr = scheme[attrKey];
+          if (
+            attr.type === 'select' &&
+            attr.relation &&
+            attr.relation.resource === resourceName &&
+            attr.relation.value === attributeName
+          ) {
+            for (const row of this.data[schemeKey]) {
+              if (row[attr.relation.value] === prevValue) {
+                row[attr.relation.value] = value;
+              }
             }
           }
         }
       }
-    }
 
-    if (isValid) {
       this.save();
     } else {
       console.log('unvalid');
@@ -179,11 +208,7 @@ export class Data {
     });
   }
 
-  private valid(
-    resourceName: string,
-    scheme: ResourceScheme,
-    row: ResourceRow,
-  ): { isValid: true } | { isValid: false; attributeName: string; message: string } {
+  private valid(resourceName: string, scheme: ResourceScheme, row: ResourceRow): ValidationResult {
     const attributeNames = Object.keys(scheme.attributes);
 
     // unique
@@ -194,10 +219,10 @@ export class Data {
         const rows = this.data[resourceName];
         for (const r of rows) {
           if (r[attributeName] === row[attributeName] && r.id !== row.id) {
-            console.log(r[attributeName], row[attributeName]);
-            console.log('error');
             return {
               isValid: false,
+              resourceName,
+              id: row.id,
               attributeName,
               message: 'ununique value',
             };
@@ -207,6 +232,28 @@ export class Data {
     }
     return {
       isValid: true,
+      id: row.id,
+      resourceName,
     };
+  }
+
+  private registerError(result: ValidationResult) {
+    const resourceName = result.resourceName;
+
+    if (this.errors[resourceName] === undefined) {
+      this.errors[resourceName] = {};
+    }
+
+    if (result.isValid === false) {
+      this.errors[resourceName][result.id] = {
+        attributeName: result.attributeName,
+        message: result.message,
+      };
+    } else {
+      if (this.errors[resourceName]) {
+        delete this.errors[resourceName][result.id];
+      }
+    }
+    return result.isValid;
   }
 }

@@ -1,12 +1,14 @@
 import dayjs from 'dayjs';
+import classNames from 'classnames';
 import * as React from 'react';
 import styled from 'styled-components';
 
 import { Attribute, SelectOption } from './config';
-import { ResourceRow } from './Data';
+import { ResourceRow, ValidationError } from './Data';
 import { Action } from './ResourceEditor';
 
 const Wrapper = styled.td`
+  position: relative;
   border: solid 1px #ccc;
 
   &:last-of-type {
@@ -52,6 +54,19 @@ const Wrapper = styled.td`
   &.disabled {
     color: #aaa;
   }
+
+  &.has-error {
+    background: rgba(255, 0, 0, 0.5);
+  }
+
+  .error-message {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 4px;
+    color: #fff;
+  }
 `;
 
 type ResourceTableCellProps = {
@@ -59,6 +74,7 @@ type ResourceTableCellProps = {
   attributeName: string;
   attribute: Attribute;
   row: ResourceRow;
+  error: ValidationError['resourceName']['id'] | null;
   action: Action;
 };
 
@@ -185,6 +201,13 @@ export class ResourceTableCell extends React.Component<ResourceTableCellProps, R
       }
     }
 
-    return <Wrapper className={attribute.readOnly ? 'disabled' : ''}>{content}</Wrapper>;
+    const hasError = this.props.error !== null && this.props.error.attributeName === this.props.attributeName;
+
+    return (
+      <Wrapper className={classNames({ disabled: attribute.readOnly, 'has-error': hasError })}>
+        {content}
+        {hasError ? <span className="error-message">ERROR: {this.props.error.message}</span> : null}
+      </Wrapper>
+    );
   }
 }
