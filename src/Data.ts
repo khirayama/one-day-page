@@ -4,6 +4,10 @@ import axios from 'axios';
 
 import { Config, ResourceScheme, SelectOption, SelectRelation } from './config';
 
+type CommandOptions = {
+  skipSave: boolean;
+};
+
 // TODO Support delete with relations
 const req = axios.create({
   baseURL: 'http://localhost:3000',
@@ -57,7 +61,7 @@ export class Data {
     };
   }
 
-  public create(resourceName: string): void {
+  public create(resourceName: string, options?: CommandOptions) {
     if (!this.data[resourceName]) {
       this.data[resourceName] = [];
     }
@@ -103,12 +107,22 @@ export class Data {
     const result = this.valid(resourceName, scheme, row);
     const isValid = this.registerError(result);
     if (isValid) {
-      this.save();
+      if (!options || (options && !options.skipSave)) {
+        this.save();
+      }
     }
     this.emitChange();
+
+    return row;
   }
 
-  public update(resourceName: string, id: string, attributeName: string, value: string | number | boolean): void {
+  public update(
+    resourceName: string,
+    id: string,
+    attributeName: string,
+    value: string | number | boolean,
+    options?: CommandOptions,
+  ): void {
     let prevValue = null;
 
     this.data[resourceName][attributeName] = value;
@@ -155,20 +169,24 @@ export class Data {
         }
       }
 
-      this.save();
+      if (!options || (options && !options.skipSave)) {
+        this.save();
+      }
     } else {
       console.log('unvalid');
     }
     this.emitChange();
   }
 
-  public delete(resourceName: string, id: string): void {
+  public delete(resourceName: string, id: string, options?: CommandOptions): void {
     const rows = this.data[resourceName];
     this.data[resourceName] = rows.filter((row) => {
       return row.id !== id;
     });
 
-    this.save();
+    if (!options || (options && !options.skipSave)) {
+      this.save();
+    }
     this.emitChange();
   }
 
@@ -193,7 +211,15 @@ export class Data {
     req.get('/resources').then((res) => {
       this.data = res.data.resources;
       this.emitChange();
+
+      for (let callback of this.readyCallback) {
+        callback(this);
+      }
     });
+  }
+
+  public forceSave(): void {
+    this.save();
   }
 
   private save(): void {
