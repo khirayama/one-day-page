@@ -44,6 +44,8 @@ export class Data {
 
   private callbacks: Function[] = [];
 
+  private readyCallback: Function[] = [];
+
   constructor(config: Config) {
     this.config = config;
 
@@ -59,6 +61,10 @@ export class Data {
       errors: this.errors,
       resources: this.data,
     };
+  }
+
+  public ready(callback: Function) {
+    this.readyCallback.push(callback);
   }
 
   public create(resourceName: string, options?: CommandOptions) {
