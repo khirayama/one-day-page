@@ -6,7 +6,7 @@ const app = express();
 
 const PATH = './data.json';
 
-app.use(express.json()).use((req, res, next) => {
+app.use(express.json({ limit: '50mb', extended: true })).use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
