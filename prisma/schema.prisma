@@ -11,7 +11,7 @@ generator client {
 }
 
 model Month {
-  id          Int      @id @default(uuid())
+  id          String   @id @default(uuid())
   month       Int
   name        String
   kana        String
@@ -20,7 +20,7 @@ model Month {
 }
 
 model Rokuyo {
-  id        Int      @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
   kana      String
   note      String
@@ -35,7 +35,7 @@ enum CalendardayLabel {
 }
 
 model Calendarday {
-  id        Int      @id @default(uuid())
+  id        String   @id @default(uuid())
   label     CalendardayLabel
   name      String
   kana      String
@@ -45,7 +45,7 @@ model Calendarday {
 }
 
 model Calendar {
-  id        Int      @id @default(uuid())
+  id        String   @id @default(uuid())
   date      DateTime
   rokuyo    Rokuyo
   createdAt DateTime @default(now())
@@ -53,7 +53,7 @@ model Calendar {
 }
 
 model Schedule {
-  id          Int      @id @default(uuid())
+  id          String   @id @default(uuid())
   date        DateTime
   name        String
   calendarday Calendarday
@@ -70,7 +70,7 @@ enum IngredientLabel {
 }
 
 model Ingredient {
-  id        Int             @id @default(uuid())
+  id        String          @id @default(uuid())
   label     IngredientLabel
   name      String
   kana      String
