@@ -28,15 +28,15 @@ model Rokuyo {
   updatedAt DateTime @updatedAt
 }
 
-enum CalendardayLabel {
-  NATIONALHOLIDAY
-  SOLARTERM
-  SPECIALTERM
-}
+//enum CalendardayLabel {
+//  NATIONALHOLIDAY
+//  SOLARTERM
+//  SPECIALTERM
+//}
 
 model Calendarday {
   id        String   @id @default(uuid())
-  label     CalendardayLabel
+  label     String // CalendardayLabel
   name      String
   kana      String
   note      String
@@ -61,17 +61,17 @@ model Schedule {
   updatedAt   DateTime @updatedAt
 }
 
-enum IngredientLabel {
-  VEGETABLE
-  FISH
-  FRUIT
-  SEAFOOD
-  OTHER
-}
+//enum IngredientLabel {
+//  VEGETABLE
+//  FISH
+//  FRUIT
+//  SEAFOOD
+//  OTHER
+//}
 
 model Ingredient {
   id        String          @id @default(uuid())
-  label     IngredientLabel
+  label     String // IngredientLabel
   name      String
   kana      String
   note      String
