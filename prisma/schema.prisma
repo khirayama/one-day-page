@@ -1,11 +1,78 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+model Month {
+  id          Int      @id @default(uuid())
+  month       Int
+  name        String
+  kana        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Rokuyo {
+  id        Int      @id @default(uuid())
+  name      String
+  kana      String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CalendardayLabel {
+  NATIONALHOLIDAY
+  SOLARTERM
+  SPECIALTERM
+}
+
+model Calendarday {
+  id        Int      @id @default(uuid())
+  label     CalendardayLabel
+  name      String
+  kana      String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Calendar {
+  id        Int      @id @default(uuid())
+  date      DateTime
+  rokuyo    Rokuyo
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Schedule {
+  id          Int      @id @default(uuid())
+  date        DateTime
+  name        String
+  calendarday Calendarday
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum IngredientLabel {
+  VEGETABLE
+  FISH
+  FRUIT
+  SEAFOOD
+  OTHER
+}
+
+model Ingredient {
+  id        Int             @id @default(uuid())
+  label     IngredientLabel
+  name      String
+  kana      String
+  note      String
+  season    Month[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
