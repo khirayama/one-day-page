@@ -1,3 +1,6 @@
+// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
+// https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch-prisma-migrate-typescript-postgres
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
