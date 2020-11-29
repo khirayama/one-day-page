@@ -1,5 +1,11 @@
 import * as React from 'react';
+import { ResetStyle } from '../styles/ResetStyle';
 
 export default function IndexPage() {
-  return <h1>Hello Index Page</h1>;
+  return (
+    <>
+      <ResetStyle />
+      <h1>Hello Index Page</h1>
+    </>
+  );
 }
