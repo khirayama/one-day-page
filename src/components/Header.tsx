@@ -6,21 +6,22 @@ export function Header() {
       <style jsx>{`
         header {
           width: 100%;
-          max-width: 860px;
+          max-width: 630px;
           padding: 12px;
           margin: 0 auto;
-          text-align: center;
         }
 
         .year-and-date-information {
           display: inline-block;
           vertical-align: bottom;
           line-height: 1;
+          padding: 24px 12px;
         }
 
         .year-and-date-information .year {
           display: inline-block;
           width: 100%;
+          padding: 12px 0;
         }
 
         .year-and-date-information .date-information {
@@ -38,7 +39,7 @@ export function Header() {
 
         .year-and-date-information .date-information .lunar-month-and-month .month {
           text-align: center;
-          font-size: 3rem;
+          font-size: 4rem;
         }
 
         .year-and-date-information .date-information .month-text,
