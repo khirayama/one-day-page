@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { ResetStyle } from '../styles/ResetStyle';
 import { Header } from '../components/Header';
 
 export default function IndexPage() {
@@ -14,14 +13,6 @@ export default function IndexPage() {
 
   return (
     <>
-      <ResetStyle />
-      <style jsx>{`
-        background red;
-
-        .year {
-          background: blue;
-        }
-      `}</style>
       <Header />
       <div>
         <span>大根</span>
