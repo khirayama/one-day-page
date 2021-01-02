@@ -1,14 +1,25 @@
 import * as React from 'react';
+import dayjs from 'dayjs';
+import queryString from 'query-string';
 
-import { Header } from '../components/Header';
 import { services, DateInfo } from '../services';
+import { Header } from '../components/Header';
 
 export default function IndexPage() {
-  const now = new Date();
+  let fmt = 'YYYY-MM-DD';
+  let date: string = dayjs().format(fmt);
+  if (typeof window === 'object') {
+    const query = queryString.parse(window.location.search);
+    if (query.date && typeof query.date === 'string') {
+      date = dayjs(query.date || date).format(fmt);
+    }
+  }
+  console.log(date);
+
   const [dateInfo, setDateInfo] = React.useState(null);
 
   React.useEffect(() => {
-    services.fetchDate(now).then((dInfo: DateInfo) => {
+    services.fetchDate(date).then((dInfo: DateInfo) => {
       setDateInfo(dInfo);
     });
   }, []);
@@ -17,7 +28,7 @@ export default function IndexPage() {
     '読み込み中'
   ) : (
     <div className="max-w-screen-sm mx-auto">
-      <Header dateInfo={dateInfo} />
+      <Header date={date} dateInfo={dateInfo} />
       <div>週間カレンダー</div>
       <div>月間カレンダー</div>
       <h2>旬の食べ物</h2>

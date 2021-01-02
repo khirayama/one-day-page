@@ -1,30 +1,53 @@
 import * as React from 'react';
+import dayjs from 'dayjs';
 
-export function Header() {
+import { DateInfo } from '../services';
+
+type HeaderProps = {
+  date: string;
+  dateInfo: DateInfo;
+};
+
+export function Header(props: HeaderProps) {
+  const targetDate = dayjs(props.date);
+  const dateInfo = props.dateInfo;
+
   return (
     <header className="py-4 px-2">
       <div>
-        <div>2020年(令和2年)</div>
-        <div>霜月</div>
         <div>
-          <div className="inline-block">11</div>
+          {dateInfo.year}年({dateInfo.yearJa})
+        </div>
+        <div>{dateInfo.monthJa}</div>
+        <div>
+          <div className="inline-block">{dateInfo.month}</div>
           <div className="inline-block">月</div>
-          <div className="inline-block">23</div>
+          <div className="inline-block">{dateInfo.date}</div>
           <div className="inline-block">日</div>
         </div>
         <div>
-          <div>日曜日</div>
-          <div>赤口</div>
+          <div>{dateInfo.dayJa}</div>
+          <div>{dateInfo.rokuyo}</div>
         </div>
       </div>
 
       <div>
-        <div>勤労感謝の日</div>
-        <div>次の祝日は11月23日 日曜日 勤労感謝の日(10日後)</div>
-        <div>大寒</div>
-        <div>次の二十四節気は11月23日 日曜日 小寒(10日後)</div>
-        <div>節分</div>
-        <div>次の雑期は11月23日 日曜日 小寒(10日後)</div>
+        {dateInfo.schedules.map((schedule) => {
+          return (
+            <div key={schedule.name}>
+              {schedule.labelJa} {schedule.name}
+            </div>
+          );
+        })}
+        {Object.keys(dateInfo.nextSchedules).map((scheduleLabel) => {
+          const schedule = dateInfo.nextSchedules[scheduleLabel];
+          const date = dayjs(schedule.date);
+          return (
+            <div key={schedule.label + schedule.date}>
+              次の{schedule.labelJa}は{date.format('M月D日')} {schedule.name} {date.diff(targetDate, 'day')}日後
+            </div>
+          );
+        })}
       </div>
     </header>
   );
