@@ -13,7 +13,6 @@ export default function IndexPage() {
       date = dayjs(query.date || date).format(fmt);
     }
   }
-  console.log(date);
 
   const [dateInfo, setDateInfo] = React.useState(null);
 
@@ -58,8 +57,8 @@ export default function IndexPage() {
             const scheduleDate = dayjs(schedule.date);
             return (
               <div key={schedule.label + schedule.date}>
-                次の{schedule.labelJa}は{scheduleDate.format('M月D日')} {schedule.name} {scheduleDate.diff(date, 'day')}
-                日後
+                次の{schedule.labelJa}は{scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後){' '}
+                {schedule.name}
               </div>
             );
           })}
