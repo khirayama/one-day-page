@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import queryString from 'query-string';
 
 import { services, DateInfo } from '../services';
-import { Header } from '../components/Header';
 
 export default function IndexPage() {
   let fmt = 'YYYY-MM-DD';
@@ -28,7 +27,44 @@ export default function IndexPage() {
     '読み込み中'
   ) : (
     <div className="max-w-screen-sm mx-auto">
-      <Header date={date} dateInfo={dateInfo} />
+      <header className="py-4 px-2">
+        <div>
+          <div>
+            {dateInfo.year}年({dateInfo.yearJa})
+          </div>
+          <div>{dateInfo.monthJa}</div>
+          <div>
+            <div className="inline-block">{dateInfo.month}</div>
+            <div className="inline-block">月</div>
+            <div className="inline-block">{dateInfo.date}</div>
+            <div className="inline-block">日</div>
+          </div>
+          <div>
+            <div>{dateInfo.dayJa}</div>
+            <div>{dateInfo.rokuyo}</div>
+          </div>
+        </div>
+
+        <div>
+          {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
+            return (
+              <div key={schedule.name}>
+                {schedule.labelJa} {schedule.name}
+              </div>
+            );
+          })}
+          {Object.keys(dateInfo.nextSchedules).map((scheduleLabel) => {
+            const schedule = dateInfo.nextSchedules[scheduleLabel];
+            const scheduleDate = dayjs(schedule.date);
+            return (
+              <div key={schedule.label + schedule.date}>
+                次の{schedule.labelJa}は{scheduleDate.format('M月D日')} {schedule.name} {scheduleDate.diff(date, 'day')}
+                日後
+              </div>
+            );
+          })}
+        </div>
+      </header>
       <div>週間カレンダー</div>
       <div>月間カレンダー</div>
       <h2>旬の食べ物</h2>
