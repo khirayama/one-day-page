@@ -79,9 +79,8 @@ export type ScheduleInfo = {
 };
 
 export const services = {
-  fetchDate: (date: Date): Promise<DateInfo> => {
-    return req.get(`/dates/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`).then((res) => {
-      console.log(res.data);
+  fetchDate: (date: String): Promise<DateInfo> => {
+    return req.get(`/dates/${date}`).then((res) => {
       return res.data;
     });
   },
