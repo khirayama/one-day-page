@@ -4,7 +4,7 @@ const req = axios.create({
   baseURL: 'http://localhost:4000',
 });
 
-export type DateScheduleInfo = {
+export type ScheduleInfo = {
   date: string;
   label: string;
   labelJa: string;
@@ -24,106 +24,44 @@ export type DateInfo = {
   dayJaKana: string;
   rokuyo: string;
   rokuyoKana: string;
-  schedules: {
-    label: string;
-    labelJa: string;
-    name: string;
-    kana: string;
-  }[];
-  nextSchedules: {
-    nationalholiday: DateScheduleInfo;
-    solarterm: DateScheduleInfo;
-    specialterm: DateScheduleInfo;
-  };
-  prevSchedules: {
-    nationalholiday: DateScheduleInfo;
-    solarterm: DateScheduleInfo;
-    specialterm: DateScheduleInfo;
-  };
-};
-
-export type ScheduleInfo = {
-  schedules: {
-    type: 'nationalholiday' | 'solarterm' | 'specialterm';
-    date: string;
-    name: string;
-  }[];
-  prev: {
-    nationalholiday: {
-      date: string;
-      name: string;
-    };
-    solarterm: {
-      date: string;
-      name: string;
-    };
-    specialterm: {
-      date: string;
-      name: string;
-    };
-  };
-  next: {
-    nationalholiday: {
-      date: string;
-      name: string;
-    };
-    solarterm: {
-      date: string;
-      name: string;
-    };
-    specialterm: {
-      date: string;
-      name: string;
-    };
-  };
+  schedules: ScheduleInfo[];
 };
 
 export const services = {
+  fetchCalander: (from: String, to: String, limit: number): Promise<DateInfo[]> => {
+    return req
+      .get('/calendar', {
+        params: {
+          from,
+          to,
+          limit,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        return res.data;
+      });
+  },
+
   fetchDate: (date: String): Promise<DateInfo> => {
-    return req.get(`/dates/${date}`).then((res) => {
+    return req.get(`/calendar/${date}`).then((res) => {
       return res.data;
     });
   },
 
-  fetchCalander: async (from: Date, to: Date): Promise<DateInfo[]> => {
-    console.log(from.toString(), to.toString());
-    // TODO
-    return [];
-  },
-
-  fetchSchedule: async (from: Date, to: Date): Promise<ScheduleInfo> => {
-    console.log(from.toString(), to.toString());
-    // TODO
-    return {
-      schedules: [],
-      prev: {
-        nationalholiday: {
-          name: '',
-          date: '',
+  fetchSchedules: (from: String, to: String, limit: number, labels: string[]): Promise<ScheduleInfo[]> => {
+    return req
+      .get('/schedules', {
+        params: {
+          from,
+          to,
+          limit,
+          labels: labels.join(','),
         },
-        solarterm: {
-          name: '',
-          date: '',
-        },
-        specialterm: {
-          name: '',
-          date: '',
-        },
-      },
-      next: {
-        nationalholiday: {
-          name: '',
-          date: '',
-        },
-        solarterm: {
-          name: '',
-          date: '',
-        },
-        specialterm: {
-          name: '',
-          date: '',
-        },
-      },
-    };
+      })
+      .then((res) => {
+        console.log(res);
+        return res.data;
+      });
   },
 };
