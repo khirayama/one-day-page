@@ -38,7 +38,6 @@ export const services = {
         },
       })
       .then((res) => {
-        console.log(res);
         return res.data;
       });
   },
@@ -60,7 +59,6 @@ export const services = {
         },
       })
       .then((res) => {
-        console.log(res);
         return res.data;
       });
   },
