@@ -22,29 +22,20 @@ export default function IndexPage() {
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
 
   React.useEffect(() => {
-    const nextD = d.add(1, 'day');
-    // date
+    const frm = d.add(1, 'day').format(fmt);
+    const to = d.add(12, 'month').format(fmt);
     services.fetchDate(date).then((dInfo: DateInfo) => {
       setDateInfo(dInfo);
     });
-    // Next nationalholiday
-    services
-      .fetchSchedules(nextD.format(fmt), d.add(12, 'month').format(fmt), 1, ['nationalholiday'])
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextNationalholiday(scheduleInfo[0]);
-      });
-    // Next solarterm
-    services
-      .fetchSchedules(nextD.format(fmt), d.add(12, 'month').format(fmt), 1, ['solarterm'])
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextSolarterm(scheduleInfo[0]);
-      });
-    // Next specialterm
-    services
-      .fetchSchedules(nextD.format(fmt), d.add(12, 'month').format(fmt), 1, ['specialterm'])
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextSpecialterm(scheduleInfo[0]);
-      });
+    services.fetchSchedules(frm, to, 1, ['nationalholiday']).then((scheduleInfo: ScheduleInfo[]) => {
+      setNextNationalholiday(scheduleInfo[0]);
+    });
+    services.fetchSchedules(frm, to, 1, ['solarterm']).then((scheduleInfo: ScheduleInfo[]) => {
+      setNextSolarterm(scheduleInfo[0]);
+    });
+    services.fetchSchedules(frm, to, 1, ['specialterm']).then((scheduleInfo: ScheduleInfo[]) => {
+      setNextSpecialterm(scheduleInfo[0]);
+    });
   }, []);
 
   return dateInfo === null || nextNationalholiday === null || nextSolarterm === null || nextSpecialterm === null ? (
