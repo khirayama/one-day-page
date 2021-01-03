@@ -20,6 +20,7 @@ export default function IndexPage() {
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
+  const [weekCalendar, setWeekCalendar] = React.useState(null);
 
   React.useEffect(() => {
     const frm = d.add(1, 'day').format(fmt);
@@ -36,9 +37,20 @@ export default function IndexPage() {
     services.fetchSchedules(frm, to, 1, ['specialterm']).then((scheduleInfo: ScheduleInfo[]) => {
       setNextSpecialterm(scheduleInfo[0]);
     });
+
+    const day = d.get('day');
+    const fromForWeek = d.add(-1 * day, 'day').format(fmt);
+    const toForWeek = d.add(-1 * day + 6, 'day').format(fmt);
+    services.fetchCalander(fromForWeek, toForWeek, 1000).then((weekCal: DateInfo[]) => {
+      setWeekCalendar(weekCal);
+    });
   }, []);
 
-  return dateInfo === null || nextNationalholiday === null || nextSolarterm === null || nextSpecialterm === null ? (
+  return dateInfo === null ||
+    nextNationalholiday === null ||
+    nextSolarterm === null ||
+    nextSpecialterm === null ||
+    weekCalendar === null ? (
     '読み込み中'
   ) : (
     <div className="max-w-screen-sm mx-auto">
@@ -81,6 +93,16 @@ export default function IndexPage() {
         </div>
       </header>
       <div>週間カレンダー</div>
+      <ul>
+        {weekCalendar.map((weekCal: DateInfo) => {
+          return (
+            <li key={weekCal.date}>
+              {weekCal.date} {weekCal.dayJa} {weekCal.rokuyo}{' '}
+              {weekCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
+            </li>
+          );
+        })}
+      </ul>
       <div>月間カレンダー</div>
       <h2>旬の食べ物</h2>
       <div>
