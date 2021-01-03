@@ -4,18 +4,19 @@ import queryString from 'query-string';
 
 import { services, DateInfo, ScheduleInfo } from '../services';
 
-export default function IndexPage() {
-  let fmt = 'YYYY-MM-DD';
+let fmt = 'YYYY-MM-DD';
 
-  let d = dayjs();
-  if (typeof window === 'object') {
-    const query = queryString.parse(window.location.search);
-    if (query.date && typeof query.date === 'string') {
-      d = dayjs(query.date || d);
-    }
+let d = dayjs();
+if (typeof window === 'object') {
+  const query = queryString.parse(window.location.search);
+  if (query.date && typeof query.date === 'string') {
+    d = dayjs(query.date || d);
   }
-  const date: string = d.format(fmt);
+}
 
+export default function IndexPage() {
+  const [date] = React.useState(d.format(fmt));
+  const [firstDayOfWeek, setFirstDayOfWeek] = React.useState(d.add(-1 * d.get('day'), 'day').format(fmt));
   const [dateInfo, setDateInfo] = React.useState(null);
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
@@ -38,12 +39,11 @@ export default function IndexPage() {
       setNextSpecialterm(scheduleInfo[0]);
     });
 
-    const day = d.get('day');
-    const fromForWeek = d.add(-1 * day, 'day').format(fmt);
-    const toForWeek = d.add(-1 * day + 6, 'day').format(fmt);
-    services.fetchCalander(fromForWeek, toForWeek, 1000).then((weekCal: DateInfo[]) => {
-      setWeekCalendar(weekCal);
-    });
+    services
+      .fetchCalander(firstDayOfWeek, dayjs(firstDayOfWeek).add(6, 'day').format(fmt), 1000)
+      .then((weekCal: DateInfo[]) => {
+        setWeekCalendar(weekCal);
+      });
   }, []);
 
   return dateInfo === null ||
@@ -93,6 +93,32 @@ export default function IndexPage() {
         </div>
       </header>
       <div>週間カレンダー</div>
+      <button
+        onClick={() => {
+          const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
+          services
+            .fetchCalander(prevFirstDayOfWeek, dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
+            .then((weekCal: DateInfo[]) => {
+              setFirstDayOfWeek(prevFirstDayOfWeek);
+              setWeekCalendar(weekCal);
+            });
+        }}
+      >
+        前週
+      </button>
+      <button
+        onClick={() => {
+          const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
+          setFirstDayOfWeek(nextFirstDayOfWeek);
+          services
+            .fetchCalander(nextFirstDayOfWeek, dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
+            .then((weekCal: DateInfo[]) => {
+              setWeekCalendar(weekCal);
+            });
+        }}
+      >
+        次週
+      </button>
       <ul>
         {weekCalendar.map((weekCal: DateInfo) => {
           return (
