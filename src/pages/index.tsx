@@ -70,20 +70,20 @@ export default function IndexPage() {
         </div>
 
         <div>
+          {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
+            return (
+              <div key={schedule.name}>
+                {schedule.name}({schedule.labelJa})
+              </div>
+            );
+          })}
+
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
             const scheduleDate = dayjs(scheduleInfo.date);
-            console.log(scheduleInfo);
             return (
               <div key={scheduleInfo.label + scheduleInfo.date}>
                 次の{scheduleInfo.labelJa}は{scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後){' '}
                 {scheduleInfo.name}
-              </div>
-            );
-          })}
-          {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
-            return (
-              <div key={schedule.name}>
-                {schedule.labelJa} {schedule.name}
               </div>
             );
           })}
