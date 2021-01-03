@@ -4,28 +4,31 @@ import queryString from 'query-string';
 
 import { services, DateInfo, ScheduleInfo } from '../services';
 
-let fmt = 'YYYY-MM-DD';
-
-let d = dayjs();
-if (typeof window === 'object') {
-  const query = queryString.parse(window.location.search);
-  if (query.date && typeof query.date === 'string') {
-    d = dayjs(query.date || d);
-  }
-}
-
 export default function IndexPage() {
+  let fmt = 'YYYY-MM-DD';
+
+  let d = dayjs();
+  if (typeof window === 'object') {
+    const query = queryString.parse(window.location.search);
+    if (query.date && typeof query.date === 'string') {
+      d = dayjs(query.date || d);
+    }
+  }
+
   const [date] = React.useState(d.format(fmt));
   const [firstDayOfWeek, setFirstDayOfWeek] = React.useState(d.add(-1 * d.get('day'), 'day').format(fmt));
+  const [yearAndMonth, setYearAndMonth] = React.useState(d.format('YYYY-MM'));
   const [dateInfo, setDateInfo] = React.useState(null);
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
   const [weekCalendar, setWeekCalendar] = React.useState(null);
+  const [monthCalendar, setMonthCalendar] = React.useState(null);
 
   React.useEffect(() => {
     const frm = d.add(1, 'day').format(fmt);
     const to = d.add(12, 'month').format(fmt);
+
     services.fetchDate(date).then((dInfo: DateInfo) => {
       setDateInfo(dInfo);
     });
@@ -44,13 +47,26 @@ export default function IndexPage() {
       .then((weekCal: DateInfo[]) => {
         setWeekCalendar(weekCal);
       });
+
+    const firstDayOfMonth = dayjs(`${yearAndMonth}-1`);
+    const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+    services
+      .fetchCalander(
+        firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+        lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+        1000,
+      )
+      .then((monthCal: DateInfo[]) => {
+        setMonthCalendar(monthCal);
+      });
   }, []);
 
   return dateInfo === null ||
     nextNationalholiday === null ||
     nextSolarterm === null ||
     nextSpecialterm === null ||
-    weekCalendar === null ? (
+    weekCalendar === null ||
+    monthCalendar === null ? (
     '読み込み中'
   ) : (
     <div className="max-w-screen-sm mx-auto">
@@ -122,14 +138,63 @@ export default function IndexPage() {
       <ul>
         {weekCalendar.map((weekCal: DateInfo) => {
           return (
-            <li key={weekCal.date}>
+            <li key={`week-${weekCal.month}-${weekCal.date}`}>
               {weekCal.date} {weekCal.dayJa} {weekCal.rokuyo}{' '}
               {weekCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
             </li>
           );
         })}
       </ul>
-      <div>月間カレンダー</div>
+
+      <div>月間カレンダー({yearAndMonth}月)</div>
+      <button
+        onClick={() => {
+          const current = dayjs(`${yearAndMonth}-1`);
+          const firstDayOfMonth = current.add(-1, 'month');
+          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+          services
+            .fetchCalander(
+              firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+              lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              1000,
+            )
+            .then((monthCal: DateInfo[]) => {
+              setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
+              setMonthCalendar(monthCal);
+            });
+        }}
+      >
+        前月
+      </button>
+      <button
+        onClick={() => {
+          const current = dayjs(`${yearAndMonth}-1`);
+          const firstDayOfMonth = current.add(1, 'month');
+          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+          services
+            .fetchCalander(
+              firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+              lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              1000,
+            )
+            .then((monthCal: DateInfo[]) => {
+              setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
+              setMonthCalendar(monthCal);
+            });
+        }}
+      >
+        次月
+      </button>
+      <ul>
+        {monthCalendar.map((monthCal: DateInfo) => {
+          return (
+            <li key={`month-${monthCal.month}-${monthCal.date}`}>
+              {monthCal.date} {monthCal.dayJa} {monthCal.rokuyo}{' '}
+              {monthCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
+            </li>
+          );
+        })}
+      </ul>
       <h2>旬の食べ物</h2>
       <div>
         <span>大根</span>
