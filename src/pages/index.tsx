@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import queryString from 'query-string';
 
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
+import { WeeklyCalendar } from '../components/WeeklyCalendar';
 
 export default function IndexPage() {
   let fmt = 'YYYY-MM-DD';
@@ -22,7 +23,7 @@ export default function IndexPage() {
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
-  const [weekCalendar, setWeekCalendar] = React.useState(null);
+  const [weeklyCalendar, setWeeklyCalendar] = React.useState(null);
   const [monthCalendar, setMonthCalendar] = React.useState(null);
   const [seasonalVegetables, setSeasonalVegetables] = React.useState(null);
   const [seasonalFruits, setSeasonalFruits] = React.useState(null);
@@ -59,7 +60,7 @@ export default function IndexPage() {
         to: dayjs(firstDayOfWeek).add(6, 'day').format(fmt),
       })
       .then((weekCal: DateInfo[]) => {
-        setWeekCalendar(weekCal);
+        setWeeklyCalendar(weekCal);
       });
 
     const firstDayOfMonth = dayjs(`${yearAndMonth}-1`);
@@ -105,7 +106,7 @@ export default function IndexPage() {
     nextNationalholiday === null ||
     nextSolarterm === null ||
     nextSpecialterm === null ||
-    weekCalendar === null ||
+    weeklyCalendar === null ||
     monthCalendar === null ||
     seasonalVegetables === null ||
     seasonalFruits === null ||
@@ -154,42 +155,28 @@ export default function IndexPage() {
         </div>
       </header>
       <div>週間カレンダー</div>
-      <button
-        onClick={() => {
+
+      <WeeklyCalendar
+        weeklyCalendar={weeklyCalendar}
+        onPrevWeekButtonClick={() => {
           const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
           services
             .fetchCalendar({ from: prevFirstDayOfWeek, to: dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt) })
             .then((weekCal: DateInfo[]) => {
               setFirstDayOfWeek(prevFirstDayOfWeek);
-              setWeekCalendar(weekCal);
+              setWeeklyCalendar(weekCal);
             });
         }}
-      >
-        前週
-      </button>
-      <button
-        onClick={() => {
+        onNextWeekButtonClick={() => {
           const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
           setFirstDayOfWeek(nextFirstDayOfWeek);
           services
             .fetchCalendar({ from: nextFirstDayOfWeek, to: dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt) })
             .then((weekCal: DateInfo[]) => {
-              setWeekCalendar(weekCal);
+              setWeeklyCalendar(weekCal);
             });
         }}
-      >
-        次週
-      </button>
-      <ul>
-        {weekCalendar.map((weekCal: DateInfo) => {
-          return (
-            <li key={`week-${weekCal.month}-${weekCal.date}`}>
-              {weekCal.date} {weekCal.dayJa} {weekCal.rokuyo}{' '}
-              {weekCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
-            </li>
-          );
-        })}
-      </ul>
+      />
 
       <div>月間カレンダー({yearAndMonth}月)</div>
       <button
