@@ -2,7 +2,7 @@ import * as React from 'react';
 import dayjs from 'dayjs';
 import queryString from 'query-string';
 
-import { services, DateInfo, ScheduleInfo } from '../services';
+import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 
 export default function IndexPage() {
   let fmt = 'YYYY-MM-DD';
@@ -24,6 +24,11 @@ export default function IndexPage() {
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
   const [weekCalendar, setWeekCalendar] = React.useState(null);
   const [monthCalendar, setMonthCalendar] = React.useState(null);
+  const [seasonalVegetables, setSeasonalVegetables] = React.useState(null);
+  const [seasonalFruits, setSeasonalFruits] = React.useState(null);
+  const [seasonalFishes, setSeasonalFishes] = React.useState(null);
+  const [seasonalSeafoods, setSeasonalSeafoods] = React.useState(null);
+  const [seasonalOthers, setSeasonalOthers] = React.useState(null);
 
   React.useEffect(() => {
     const frm = d.add(1, 'day').format(fmt);
@@ -59,6 +64,23 @@ export default function IndexPage() {
       .then((monthCal: DateInfo[]) => {
         setMonthCalendar(monthCal);
       });
+
+    const month = d.get('month') + 1;
+    services.fetchIngredients(month, month, 3, ['vegetable']).then((ingredients: IngredientInfo[]) => {
+      setSeasonalVegetables(ingredients);
+    });
+    services.fetchIngredients(month, month, 3, ['fruit']).then((ingredients: IngredientInfo[]) => {
+      setSeasonalFruits(ingredients);
+    });
+    services.fetchIngredients(month, month, 3, ['fish']).then((ingredients: IngredientInfo[]) => {
+      setSeasonalFishes(ingredients);
+    });
+    services.fetchIngredients(month, month, 3, ['seafood']).then((ingredients: IngredientInfo[]) => {
+      setSeasonalSeafoods(ingredients);
+    });
+    services.fetchIngredients(month, month, 3, ['other']).then((ingredients: IngredientInfo[]) => {
+      setSeasonalOthers(ingredients);
+    });
   }, []);
 
   return dateInfo === null ||
@@ -66,7 +88,12 @@ export default function IndexPage() {
     nextSolarterm === null ||
     nextSpecialterm === null ||
     weekCalendar === null ||
-    monthCalendar === null ? (
+    monthCalendar === null ||
+    seasonalVegetables === null ||
+    seasonalFruits === null ||
+    seasonalFishes === null ||
+    seasonalSeafoods === null ||
+    seasonalOthers === null ? (
     '読み込み中'
   ) : (
     <div className="max-w-screen-sm mx-auto">
@@ -196,12 +223,20 @@ export default function IndexPage() {
         })}
       </ul>
       <h2>旬の食べ物</h2>
-      <div>
-        <span>大根</span>
-        <span>ブロッコリー</span>
-        <span>太刀魚</span>
-        <span>柿</span>
-      </div>
+      {[seasonalVegetables, seasonalFruits, seasonalFishes, seasonalSeafoods, seasonalOthers].map(
+        (ingredients: IngredientInfo[], i) => {
+          return (
+            <div key={`ingredient-${i}`}>
+              <h3>{ingredients[0].labelJa}</h3>
+              <ul>
+                {ingredients.map((ingredient: IngredientInfo) => {
+                  return <li key={ingredient.name}>{ingredient.name}</li>;
+                })}
+              </ul>
+            </div>
+          );
+        },
+      )}
     </div>
   );
 }
