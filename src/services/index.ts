@@ -27,6 +27,18 @@ export type DateInfo = {
   schedules: ScheduleInfo[];
 };
 
+export type IngredientInfo = {
+  label: string;
+  labelJa: string;
+  name: string;
+  kana: string;
+  season: {
+    month: string;
+    monthJa: string;
+    monthJaKana: string;
+  }[];
+};
+
 export const services = {
   fetchCalander: (from: String, to: String, limit: number): Promise<DateInfo[]> => {
     return req
@@ -51,6 +63,21 @@ export const services = {
   fetchSchedules: (from: String, to: String, limit: number, labels: string[]): Promise<ScheduleInfo[]> => {
     return req
       .get('/schedules', {
+        params: {
+          from,
+          to,
+          limit,
+          labels: labels.join(','),
+        },
+      })
+      .then((res) => {
+        return res.data;
+      });
+  },
+
+  fetchIngredients: (from: number, to: number, limit: number, labels: string[]): Promise<IngredientInfo[]> => {
+    return req
+      .get('/ingredients', {
         params: {
           from,
           to,
