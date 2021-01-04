@@ -12,10 +12,10 @@ export function WeeklyCalendar(props: {
     <>
       <button onClick={props.onPrevWeekButtonClick}>前週</button>
       <button onClick={props.onNextWeekButtonClick}>次週</button>
-      <ul className="flex">
+      <ul className="grid grid-cols-7">
         {weeklyCalendar.map((weeklyCal: DateInfo) => {
           return (
-            <li key={`week-${weeklyCal.month}-${weeklyCal.date}`} className="flex-1">
+            <li key={`week-${weeklyCal.month}-${weeklyCal.date}`}>
               <div>{weeklyCal.month}</div>
               <div>
                 {weeklyCal.date} {weeklyCal.dayJa} {weeklyCal.rokuyo}
