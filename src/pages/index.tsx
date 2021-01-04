@@ -48,7 +48,10 @@ export default function IndexPage() {
     });
 
     services
-      .fetchCalander(firstDayOfWeek, dayjs(firstDayOfWeek).add(6, 'day').format(fmt), 1000)
+      .fetchCalander({
+        from: firstDayOfWeek,
+        to: dayjs(firstDayOfWeek).add(6, 'day').format(fmt),
+      })
       .then((weekCal: DateInfo[]) => {
         setWeekCalendar(weekCal);
       });
@@ -56,11 +59,10 @@ export default function IndexPage() {
     const firstDayOfMonth = dayjs(`${yearAndMonth}-1`);
     const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
     services
-      .fetchCalander(
-        firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-        lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-        1000,
-      )
+      .fetchCalander({
+        from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+        to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+      })
       .then((monthCal: DateInfo[]) => {
         setMonthCalendar(monthCal);
       });

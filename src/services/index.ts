@@ -40,18 +40,10 @@ export type IngredientInfo = {
 };
 
 export const services = {
-  fetchCalander: (from: String, to: String, limit: number): Promise<DateInfo[]> => {
-    return req
-      .get('/calendar', {
-        params: {
-          from,
-          to,
-          limit,
-        },
-      })
-      .then((res) => {
-        return res.data;
-      });
+  fetchCalander: (params: { from: String; to: String; limit?: number }): Promise<DateInfo[]> => {
+    return req.get('/calendar', { params }).then((res) => {
+      return res.data;
+    });
   },
 
   fetchDate: (date: String): Promise<DateInfo> => {
