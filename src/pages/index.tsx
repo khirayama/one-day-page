@@ -4,6 +4,7 @@ import queryString from 'query-string';
 
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 import { WeeklyCalendar } from '../components/WeeklyCalendar';
+import { MonthlyCalendar } from '../components/MonthlyCalendar';
 
 export default function IndexPage() {
   let fmt = 'YYYY-MM-DD';
@@ -24,7 +25,7 @@ export default function IndexPage() {
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
   const [weeklyCalendar, setWeeklyCalendar] = React.useState(null);
-  const [monthCalendar, setMonthCalendar] = React.useState(null);
+  const [monthlyCalendar, setMonthlyCalendar] = React.useState(null);
   const [seasonalVegetables, setSeasonalVegetables] = React.useState(null);
   const [seasonalFruits, setSeasonalFruits] = React.useState(null);
   const [seasonalFishes, setSeasonalFishes] = React.useState(null);
@@ -71,7 +72,7 @@ export default function IndexPage() {
         to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
       })
       .then((monthCal: DateInfo[]) => {
-        setMonthCalendar(monthCal);
+        setMonthlyCalendar(monthCal);
       });
 
     const month = d.get('month') + 1;
@@ -107,7 +108,7 @@ export default function IndexPage() {
     nextSolarterm === null ||
     nextSpecialterm === null ||
     weeklyCalendar === null ||
-    monthCalendar === null ||
+    monthlyCalendar === null ||
     seasonalVegetables === null ||
     seasonalFruits === null ||
     seasonalFishes === null ||
@@ -154,8 +155,8 @@ export default function IndexPage() {
           })}
         </div>
       </header>
-      <div>週間カレンダー</div>
 
+      <div>週間カレンダー</div>
       <WeeklyCalendar
         weeklyCalendar={weeklyCalendar}
         onPrevWeekButtonClick={() => {
@@ -179,8 +180,9 @@ export default function IndexPage() {
       />
 
       <div>月間カレンダー({yearAndMonth}月)</div>
-      <button
-        onClick={() => {
+      <MonthlyCalendar
+        monthlyCalendar={monthlyCalendar}
+        onPrevMonthButtonClick={() => {
           const current = dayjs(`${yearAndMonth}-1`);
           const firstDayOfMonth = current.add(-1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
@@ -191,14 +193,10 @@ export default function IndexPage() {
             })
             .then((monthCal: DateInfo[]) => {
               setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
-              setMonthCalendar(monthCal);
+              setMonthlyCalendar(monthCal);
             });
         }}
-      >
-        前月
-      </button>
-      <button
-        onClick={() => {
+        onNextMonthButtonClick={() => {
           const current = dayjs(`${yearAndMonth}-1`);
           const firstDayOfMonth = current.add(1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
@@ -209,22 +207,11 @@ export default function IndexPage() {
             })
             .then((monthCal: DateInfo[]) => {
               setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
-              setMonthCalendar(monthCal);
+              setMonthlyCalendar(monthCal);
             });
         }}
-      >
-        次月
-      </button>
-      <ul>
-        {monthCalendar.map((monthCal: DateInfo) => {
-          return (
-            <li key={`month-${monthCal.month}-${monthCal.date}`}>
-              {monthCal.date} {monthCal.dayJa} {monthCal.rokuyo}{' '}
-              {monthCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
-            </li>
-          );
-        })}
-      </ul>
+      />
+
       <h2>旬の食べ物</h2>
       {[seasonalVegetables, seasonalFruits, seasonalFishes, seasonalSeafoods, seasonalOthers].map(
         (ingredients: IngredientInfo[], i) => {
