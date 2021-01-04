@@ -74,21 +74,31 @@ export default function IndexPage() {
       });
 
     const month = d.get('month') + 1;
-    services.fetchIngredients(month, month, 3, ['vegetable']).then((ingredients: IngredientInfo[]) => {
-      setSeasonalVegetables(ingredients);
-    });
-    services.fetchIngredients(month, month, 3, ['fruit']).then((ingredients: IngredientInfo[]) => {
-      setSeasonalFruits(ingredients);
-    });
-    services.fetchIngredients(month, month, 3, ['fish']).then((ingredients: IngredientInfo[]) => {
-      setSeasonalFishes(ingredients);
-    });
-    services.fetchIngredients(month, month, 3, ['seafood']).then((ingredients: IngredientInfo[]) => {
-      setSeasonalSeafoods(ingredients);
-    });
-    services.fetchIngredients(month, month, 3, ['other']).then((ingredients: IngredientInfo[]) => {
-      setSeasonalOthers(ingredients);
-    });
+    services
+      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'vegetable' })
+      .then((ingredients: IngredientInfo[]) => {
+        setSeasonalVegetables(ingredients);
+      });
+    services
+      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'fruit' })
+      .then((ingredients: IngredientInfo[]) => {
+        setSeasonalFruits(ingredients);
+      });
+    services
+      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'fish' })
+      .then((ingredients: IngredientInfo[]) => {
+        setSeasonalFishes(ingredients);
+      });
+    services
+      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'seafood' })
+      .then((ingredients: IngredientInfo[]) => {
+        setSeasonalSeafoods(ingredients);
+      });
+    services
+      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'other' })
+      .then((ingredients: IngredientInfo[]) => {
+        setSeasonalOthers(ingredients);
+      });
   }, []);
 
   return dateInfo === null ||

@@ -53,27 +53,19 @@ export const services = {
   },
 
   fetchSchedules: (params: { from: String; to: String; limit?: number; labels?: string }): Promise<ScheduleInfo[]> => {
-    return req
-      .get('/schedules', {
-        params,
-      })
-      .then((res) => {
-        return res.data;
-      });
+    return req.get('/schedules', { params }).then((res) => {
+      return res.data;
+    });
   },
 
-  fetchIngredients: (from: number, to: number, limit: number, labels: string[]): Promise<IngredientInfo[]> => {
-    return req
-      .get('/ingredients', {
-        params: {
-          from,
-          to,
-          limit,
-          labels: labels.join(','),
-        },
-      })
-      .then((res) => {
-        return res.data;
-      });
+  fetchIngredients: (params: {
+    from: number;
+    to: number;
+    limit?: number;
+    labels?: string;
+  }): Promise<IngredientInfo[]> => {
+    return req.get('/ingredients', { params }).then((res) => {
+      return res.data;
+    });
   },
 };
