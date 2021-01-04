@@ -52,15 +52,10 @@ export const services = {
     });
   },
 
-  fetchSchedules: (from: String, to: String, limit: number, labels: string[]): Promise<ScheduleInfo[]> => {
+  fetchSchedules: (params: { from: String; to: String; limit?: number; labels?: string }): Promise<ScheduleInfo[]> => {
     return req
       .get('/schedules', {
-        params: {
-          from,
-          to,
-          limit,
-          labels: labels.join(','),
-        },
+        params,
       })
       .then((res) => {
         return res.data;

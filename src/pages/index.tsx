@@ -37,15 +37,21 @@ export default function IndexPage() {
     services.fetchDate(date).then((dInfo: DateInfo) => {
       setDateInfo(dInfo);
     });
-    services.fetchSchedules(frm, to, 1, ['nationalholiday']).then((scheduleInfo: ScheduleInfo[]) => {
-      setNextNationalholiday(scheduleInfo[0]);
-    });
-    services.fetchSchedules(frm, to, 1, ['solarterm']).then((scheduleInfo: ScheduleInfo[]) => {
-      setNextSolarterm(scheduleInfo[0]);
-    });
-    services.fetchSchedules(frm, to, 1, ['specialterm']).then((scheduleInfo: ScheduleInfo[]) => {
-      setNextSpecialterm(scheduleInfo[0]);
-    });
+    services
+      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'nationalholiday' })
+      .then((scheduleInfo: ScheduleInfo[]) => {
+        setNextNationalholiday(scheduleInfo[0]);
+      });
+    services
+      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' })
+      .then((scheduleInfo: ScheduleInfo[]) => {
+        setNextSolarterm(scheduleInfo[0]);
+      });
+    services
+      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' })
+      .then((scheduleInfo: ScheduleInfo[]) => {
+        setNextSpecialterm(scheduleInfo[0]);
+      });
 
     services
       .fetchCalendar({
