@@ -48,7 +48,7 @@ export default function IndexPage() {
     });
 
     services
-      .fetchCalander({
+      .fetchCalendar({
         from: firstDayOfWeek,
         to: dayjs(firstDayOfWeek).add(6, 'day').format(fmt),
       })
@@ -59,7 +59,7 @@ export default function IndexPage() {
     const firstDayOfMonth = dayjs(`${yearAndMonth}-1`);
     const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
     services
-      .fetchCalander({
+      .fetchCalendar({
         from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
         to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
       })
@@ -142,7 +142,7 @@ export default function IndexPage() {
         onClick={() => {
           const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
           services
-            .fetchCalander(prevFirstDayOfWeek, dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
+            .fetchCalendar(prevFirstDayOfWeek, dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
             .then((weekCal: DateInfo[]) => {
               setFirstDayOfWeek(prevFirstDayOfWeek);
               setWeekCalendar(weekCal);
@@ -156,7 +156,7 @@ export default function IndexPage() {
           const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
           setFirstDayOfWeek(nextFirstDayOfWeek);
           services
-            .fetchCalander(nextFirstDayOfWeek, dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
+            .fetchCalendar(nextFirstDayOfWeek, dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt), 1000)
             .then((weekCal: DateInfo[]) => {
               setWeekCalendar(weekCal);
             });
@@ -182,7 +182,7 @@ export default function IndexPage() {
           const firstDayOfMonth = current.add(-1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
           services
-            .fetchCalander(
+            .fetchCalendar(
               firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
               lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
               1000,
@@ -201,7 +201,7 @@ export default function IndexPage() {
           const firstDayOfMonth = current.add(1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
           services
-            .fetchCalander(
+            .fetchCalendar(
               firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
               lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
               1000,
