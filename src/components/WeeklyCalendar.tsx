@@ -15,7 +15,7 @@ export function WeeklyCalendar(props: {
       <ul className="grid grid-cols-7">
         {weeklyCalendar.map((weeklyCal: DateInfo) => {
           return (
-            <li key={`week-${weeklyCal.month}-${weeklyCal.date}`}>
+            <li key={`week-${weeklyCal.month}-${weeklyCal.date}`} className="p-1 border">
               <div>{weeklyCal.month}</div>
               <div>
                 {weeklyCal.date} {weeklyCal.dayJa} {weeklyCal.rokuyo}

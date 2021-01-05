@@ -15,7 +15,7 @@ export function MonthlyCalendar(props: {
       <ul className="grid grid-cols-7">
         {monthlyCalendar.map((monthCal: DateInfo) => {
           return (
-            <li key={`month-${monthCal.month}-${monthCal.date}`}>
+            <li key={`month-${monthCal.month}-${monthCal.date}`} className="p-1 border">
               {monthCal.date} {monthCal.dayJa} {monthCal.rokuyo}{' '}
               {monthCal.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}
             </li>
