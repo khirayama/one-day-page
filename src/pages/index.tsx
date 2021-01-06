@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 import { WeeklyCalendar } from '../components/WeeklyCalendar';
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
+import { Ingredients } from '../components/Ingredients';
 
 export default function IndexPage() {
   let fmt = 'YYYY-MM-DD';
@@ -19,7 +20,7 @@ export default function IndexPage() {
 
   const [date] = React.useState(d.format(fmt));
   const [firstDayOfWeek, setFirstDayOfWeek] = React.useState(d.add(-1 * d.get('day'), 'day').format(fmt));
-  const [yearAndMonth, setYearAndMonth] = React.useState(d.format('YYYY-MM'));
+  const [currentMonth, setCurrentMonth] = React.useState(d.format('YYYY-MM'));
   const [dateInfo, setDateInfo] = React.useState(null);
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
@@ -40,7 +41,7 @@ export default function IndexPage() {
       setDateInfo(dInfo);
     });
     services
-      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'nationalholiday' })
+      .fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' })
       .then((scheduleInfo: ScheduleInfo[]) => {
         setNextNationalholiday(scheduleInfo[0]);
       });
@@ -64,7 +65,7 @@ export default function IndexPage() {
         setWeeklyCalendar(weekCal);
       });
 
-    const firstDayOfMonth = dayjs(`${yearAndMonth}-1`);
+    const firstDayOfMonth = dayjs(`${currentMonth}-1`);
     const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
     services
       .fetchCalendar({
@@ -76,28 +77,29 @@ export default function IndexPage() {
       });
 
     const month = d.get('month') + 1;
+    const limit = 3;
     services
-      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'vegetable' })
+      .fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' })
       .then((ingredients: IngredientInfo[]) => {
         setSeasonalVegetables(ingredients);
       });
     services
-      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'fruit' })
+      .fetchIngredients({ from: month, to: month, limit, labels: 'fruit' })
       .then((ingredients: IngredientInfo[]) => {
         setSeasonalFruits(ingredients);
       });
     services
-      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'fish' })
+      .fetchIngredients({ from: month, to: month, limit, labels: 'fish' })
       .then((ingredients: IngredientInfo[]) => {
         setSeasonalFishes(ingredients);
       });
     services
-      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'seafood' })
+      .fetchIngredients({ from: month, to: month, limit, labels: 'seafood' })
       .then((ingredients: IngredientInfo[]) => {
         setSeasonalSeafoods(ingredients);
       });
     services
-      .fetchIngredients({ from: month, to: month, limit: 3, labels: 'other' })
+      .fetchIngredients({ from: month, to: month, limit, labels: 'other' })
       .then((ingredients: IngredientInfo[]) => {
         setSeasonalOthers(ingredients);
       });
@@ -120,18 +122,15 @@ export default function IndexPage() {
       <header className="py-4 px-2">
         <div>
           <div>
-            {dateInfo.year}年({dateInfo.yearJa})
-          </div>
-          <div>{dateInfo.monthJa}</div>
-          <div>
-            <div className="inline-block">{dateInfo.month}</div>
-            <div className="inline-block">月</div>
-            <div className="inline-block">{dateInfo.date}</div>
-            <div className="inline-block">日</div>
+            {dateInfo.year}年 {dateInfo.yearJa}
           </div>
           <div>
-            <div>{dateInfo.dayJa}</div>
-            <div>{dateInfo.rokuyo}</div>
+            <div>
+              {dateInfo.month}月 {dateInfo.monthJa}
+            </div>
+            <div>
+              {dateInfo.date}日 {dateInfo.dayJa} {dateInfo.rokuyo}
+            </div>
           </div>
         </div>
 
@@ -156,8 +155,8 @@ export default function IndexPage() {
         </div>
       </header>
 
-      <div>週間カレンダー</div>
       <WeeklyCalendar
+        date={date}
         weeklyCalendar={weeklyCalendar}
         onPrevWeekButtonClick={() => {
           const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
@@ -165,6 +164,15 @@ export default function IndexPage() {
             .fetchCalendar({ from: prevFirstDayOfWeek, to: dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt) })
             .then((weekCal: DateInfo[]) => {
               setFirstDayOfWeek(prevFirstDayOfWeek);
+              setWeeklyCalendar(weekCal);
+            });
+        }}
+        onCurrentWeekButtonClick={() => {
+          const currentFirstDayOfWeek = d.add(-1 * d.get('day'), 'day').format(fmt);
+          services
+            .fetchCalendar({ from: currentFirstDayOfWeek, to: dayjs(currentFirstDayOfWeek).add(6, 'day').format(fmt) })
+            .then((weekCal: DateInfo[]) => {
+              setFirstDayOfWeek(currentFirstDayOfWeek);
               setWeeklyCalendar(weekCal);
             });
         }}
@@ -179,11 +187,11 @@ export default function IndexPage() {
         }}
       />
 
-      <div>月間カレンダー({yearAndMonth}月)</div>
       <MonthlyCalendar
+        date={date}
         monthlyCalendar={monthlyCalendar}
         onPrevMonthButtonClick={() => {
-          const current = dayjs(`${yearAndMonth}-1`);
+          const current = dayjs(`${currentMonth}-1`);
           const firstDayOfMonth = current.add(-1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
           services
@@ -192,12 +200,25 @@ export default function IndexPage() {
               to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
             })
             .then((monthCal: DateInfo[]) => {
-              setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
+              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+              setMonthlyCalendar(monthCal);
+            });
+        }}
+        onCurrentMonthButtonClick={() => {
+          const firstDayOfMonth = dayjs(d.format('YYYY-MM-01'));
+          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+          services
+            .fetchCalendar({
+              from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+              to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+            })
+            .then((monthCal: DateInfo[]) => {
+              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
               setMonthlyCalendar(monthCal);
             });
         }}
         onNextMonthButtonClick={() => {
-          const current = dayjs(`${yearAndMonth}-1`);
+          const current = dayjs(`${currentMonth}-1`);
           const firstDayOfMonth = current.add(1, 'month');
           const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
           services
@@ -206,27 +227,20 @@ export default function IndexPage() {
               to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
             })
             .then((monthCal: DateInfo[]) => {
-              setYearAndMonth(firstDayOfMonth.format('YYYY-MM'));
+              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
               setMonthlyCalendar(monthCal);
             });
         }}
       />
 
       <h2>旬の食べ物</h2>
-      {[seasonalVegetables, seasonalFruits, seasonalFishes, seasonalSeafoods, seasonalOthers].map(
-        (ingredients: IngredientInfo[], i) => {
-          return (
-            <div key={`ingredient-${i}`}>
-              <h3>{ingredients[0].labelJa}</h3>
-              <ul>
-                {ingredients.map((ingredient: IngredientInfo) => {
-                  return <li key={ingredient.name}>{ingredient.name}</li>;
-                })}
-              </ul>
-            </div>
-          );
-        },
-      )}
+      <Ingredients
+        seasonalVegetables={seasonalVegetables}
+        seasonalFruits={seasonalFruits}
+        seasonalFishes={seasonalFishes}
+        seasonalSeafoods={seasonalSeafoods}
+        seasonalOthers={seasonalOthers}
+      />
     </div>
   );
 }
