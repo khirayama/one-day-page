@@ -18,7 +18,7 @@ export function WeeklyCalendar(props: {
   const lastMonthLength = weeklyCalendar.filter((dateInfo) => dateInfo.month === last.month).length;
 
   return (
-    <div>
+    <div className="py-1 px-2">
       <h3>週間カレンダー</h3>
       <div>
         {first.year}年({first.yearJa}){first.month}月{first.date}日 - {last.year}年({last.yearJa}){last.month}月
