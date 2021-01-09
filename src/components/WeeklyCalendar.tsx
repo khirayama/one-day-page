@@ -1,9 +1,8 @@
 import * as React from 'react';
-import dayjs from 'dayjs';
-import classNames from 'classnames';
 
-import { DateInfo, ScheduleInfo } from '../services';
+import { DateInfo } from '../services';
 import { Button } from './Button';
+import { CalendarDateCell } from './CalendarDateCell';
 
 export function WeeklyCalendar(props: {
   date: string;
@@ -34,7 +33,7 @@ export function WeeklyCalendar(props: {
           </tr>
           <tr>
             {weeklyCalendar.map((dateInfo) => (
-              <th key={dateInfo.day} className="py-1 border-l border-r">
+              <th key={dateInfo.day} className="py-1 border-l border-r font-normal">
                 {dateInfo.dayJa.replace('曜日', '')}
               </th>
             ))}
@@ -42,35 +41,9 @@ export function WeeklyCalendar(props: {
         </thead>
         <tbody>
           <tr>
-            {weeklyCalendar.map((dateInfo: DateInfo, i) => {
-              const isHoliday = !!dateInfo.schedules.filter((schedule) => schedule.label === 'nationalholiday').length;
-              const isTarget =
-                props.date === dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`).format('YYYY-MM-DD');
-
+            {weeklyCalendar.map((dateInfo: DateInfo) => {
               return (
-                <td
-                  key={`${dateInfo.month}-${dateInfo.date}`}
-                  className={classNames(
-                    'border-l',
-                    'border-r',
-                    'align-top',
-                    'p-2',
-                    'border-r',
-                    { 'text-red-400': i === 0 },
-                    { 'text-red-400': isHoliday },
-                    { 'font-bold': isTarget },
-                  )}
-                >
-                  <div className="flex justify-between">
-                    <div className="font-bold">{dateInfo.date}</div>
-                    <div>{dateInfo.rokuyo}</div>
-                  </div>
-                  <ul className="text-xs py-4">
-                    {dateInfo.schedules.map((schedule: ScheduleInfo, i) => (
-                      <li key={`weely-calendar-schedule-${schedule.date}-${i}`}>{schedule.name}</li>
-                    ))}
-                  </ul>
-                </td>
+                <CalendarDateCell key={`${dateInfo.month}-${dateInfo.date}`} date={props.date} dateInfo={dateInfo} />
               );
             })}
           </tr>

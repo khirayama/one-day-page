@@ -1,8 +1,8 @@
 import * as React from 'react';
-import dayjs from 'dayjs';
-import classNames from 'classnames';
 
-import { DateInfo, ScheduleInfo } from '../services';
+import { DateInfo } from '../services';
+import { Button } from './Button';
+import { CalendarDateCell } from './CalendarDateCell';
 
 export function MonthlyCalendar(props: {
   date: string;
@@ -22,28 +22,15 @@ export function MonthlyCalendar(props: {
         {days.map((day, j) => {
           const num = i * days.length + j;
           const dateInfo: DateInfo = monthlyCalendar[num];
-
           const isInThisMonth = firstDateInfoOfMonth.month === dateInfo.month;
-          const isHoliday = !!dateInfo.schedules.filter((schedule) => schedule.label === 'nationalholiday').length;
-          const isTarget =
-            props.date === dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`).format('YYYY-MM-DD');
 
           return (
-            <td
+            <CalendarDateCell
               key={`${dateInfo.month}-${dateInfo.date}`}
-              className={classNames(
-                'border',
-                'align-top',
-                { 'text-gray-300': !isInThisMonth },
-                { 'text-red-400': isHoliday && isInThisMonth },
-                { 'text-red-400': j === 0 && isInThisMonth },
-                { 'font-bold': isTarget },
-              )}
-            >
-              <div>{dateInfo.date}</div>
-              <div>{dateInfo.rokuyo}</div>
-              <div>{dateInfo.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}</div>
-            </td>
+              date={props.date}
+              dateInfo={dateInfo}
+              disabled={!isInThisMonth}
+            />
           );
         })}
       </tr>,
@@ -51,21 +38,26 @@ export function MonthlyCalendar(props: {
   }
 
   return (
-    <div>
-      <h3>月間カレンダー</h3>
-      <div>
-        {firstDateInfoOfMonth.year}年({firstDateInfoOfMonth.yearJa}){firstDateInfoOfMonth.month}月{' '}
+    <div className="py-1 px-2">
+      <div className="text-center py-4">
+        {firstDateInfoOfMonth.year}年 {firstDateInfoOfMonth.yearJa} {firstDateInfoOfMonth.month}月{' '}
         {firstDateInfoOfMonth.monthJa}
       </div>
-      <button onClick={props.onPrevMonthButtonClick}>前月</button>
-      <button onClick={props.onCurrentMonthButtonClick}>今月</button>
-      <button onClick={props.onNextMonthButtonClick}>次月</button>
-      <table className="table-fixed border w-full">
+      <table className="table-fixed w-full">
         <thead>
           <tr>
+            <th colSpan={7}>
+              <div className="flex justify-between">
+                <Button onClick={props.onPrevMonthButtonClick}>前月</Button>
+                <Button onClick={props.onCurrentMonthButtonClick}>今月</Button>
+                <Button onClick={props.onNextMonthButtonClick}>次月</Button>
+              </div>
+            </th>
+          </tr>
+          <tr>
             {days.map((day) => (
-              <th key={day} className="border">
-                {day}
+              <th key={day} className="py-1 border-l border-r font-normal">
+                {day.replace('曜日', '')}
               </th>
             ))}
           </tr>
