@@ -120,7 +120,7 @@ export default function IndexPage() {
   ) : (
     <div className="max-w-screen-sm mx-auto">
       <header className="py-4 px-2">
-        <div className="text-center pt-2 pb-20">
+        <div className="text-center pt-2 pb-10">
           <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
             <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
             <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
@@ -151,13 +151,15 @@ export default function IndexPage() {
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="text-right py-4">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
             const scheduleDate = dayjs(scheduleInfo.date);
             return (
               <div key={scheduleInfo.label + scheduleInfo.date}>
-                次の{scheduleInfo.labelJa}は{scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後){' '}
-                {scheduleInfo.name}
+                <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
+                <span>
+                  {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
+                </span>
               </div>
             );
           })}
