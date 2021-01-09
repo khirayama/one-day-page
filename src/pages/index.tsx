@@ -8,7 +8,7 @@ import { MonthlyCalendar } from '../components/MonthlyCalendar';
 import { Ingredients } from '../components/Ingredients';
 
 export default function IndexPage() {
-  let fmt = 'YYYY-MM-DD';
+  const fmt = 'YYYY-MM-DD';
 
   let d = dayjs();
   if (typeof window === 'object') {
@@ -120,29 +120,38 @@ export default function IndexPage() {
   ) : (
     <div className="max-w-screen-sm mx-auto">
       <header className="py-4 px-2">
-        <div>
-          <div>
-            {dateInfo.year}年 {dateInfo.yearJa}
+        <div className="text-center pt-2 pb-20">
+          <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
+            <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
+            <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
           </div>
-          <div>
-            <div>
-              {dateInfo.month}月 {dateInfo.monthJa}
-            </div>
-            <div>
-              {dateInfo.date}日 {dateInfo.dayJa} {dateInfo.rokuyo}
-            </div>
+          <div className="box-content h-4 py-1 leading-4 relative">
+            <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
+            <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
+          </div>
+          <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
+          <div className="box-content h-4 py-1 leading-4 relative">
+            <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
+            <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
+          </div>
+
+          <div className="py-8">
+            {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
+              return (
+                <div key={schedule.name}>
+                  <div className="text-center">
+                    <span className="relative">
+                      <span className="absolute right-full pr-2 text-gray-400 w-max">{schedule.labelJa}</span>
+                      <span>{schedule.name}</span>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <div>
-          {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
-            return (
-              <div key={schedule.name}>
-                {schedule.name}({schedule.labelJa})
-              </div>
-            );
-          })}
-
+        <div className="text-right">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
             const scheduleDate = dayjs(scheduleInfo.date);
             return (
