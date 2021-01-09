@@ -2,7 +2,7 @@ import * as React from 'react';
 import dayjs from 'dayjs';
 import queryString from 'query-string';
 
-import { services, DateInfo, ScheduleInfo } from '../services';
+import { services } from '../services';
 import { render } from '../utils/OGPRender';
 
 export default function CanvasPreviewPage() {
