@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import classNames from 'classnames';
 
 import { DateInfo, ScheduleInfo } from '../services';
+import { Button } from './Button';
 
 export function WeeklyCalendar(props: {
   date: string;
@@ -14,37 +15,27 @@ export function WeeklyCalendar(props: {
   const weeklyCalendar = props.weeklyCalendar;
   const first = weeklyCalendar[0];
   const last = weeklyCalendar[weeklyCalendar.length - 1];
-  const firstMonthLength = weeklyCalendar.filter((dateInfo) => dateInfo.month === first.month).length;
-  const lastMonthLength = weeklyCalendar.filter((dateInfo) => dateInfo.month === last.month).length;
 
   return (
-    <div className="py-1 px-2">
-      <h3>週間カレンダー</h3>
-      <div>
-        {first.year}年({first.yearJa}){first.month}月{first.date}日 - {last.year}年({last.yearJa}){last.month}月
-        {last.date}日
+    <div className="py-8 px-2">
+      <div className="text-center py-4">
+        {first.year}年 {first.yearJa} {first.month}月{first.date}日 - {last.month}月{last.date}日
       </div>
-      <button onClick={props.onPrevWeekButtonClick}>前週</button>
-      <button onClick={props.onCurrentWeekButtonClick}>今週</button>
-      <button onClick={props.onNextWeekButtonClick}>次週</button>
-      <table className="table-fixed border w-full">
+      <table className="table-fixed w-full">
         <thead>
           <tr>
-            {firstMonthLength !== 0 ? (
-              <th key={first.day} colSpan={firstMonthLength} className="border text-left">
-                {first.month} {first.monthJa}
-              </th>
-            ) : null}
-            {lastMonthLength !== 0 && firstMonthLength !== lastMonthLength ? (
-              <th key={last.day} colSpan={lastMonthLength} className="border text-left">
-                {last.month} {last.monthJa}
-              </th>
-            ) : null}
+            <th colSpan={7}>
+              <div className="flex justify-between">
+                <Button onClick={props.onPrevWeekButtonClick}>前週</Button>
+                <Button onClick={props.onCurrentWeekButtonClick}>今週</Button>
+                <Button onClick={props.onNextWeekButtonClick}>次週</Button>
+              </div>
+            </th>
           </tr>
           <tr>
             {weeklyCalendar.map((dateInfo) => (
-              <th key={dateInfo.day} className="border">
-                {dateInfo.dayJa}
+              <th key={dateInfo.day} className="py-1 border-l border-r">
+                {dateInfo.dayJa.replace('曜日', '')}
               </th>
             ))}
           </tr>
@@ -60,16 +51,25 @@ export function WeeklyCalendar(props: {
                 <td
                   key={`${dateInfo.month}-${dateInfo.date}`}
                   className={classNames(
-                    'border',
+                    'border-l',
+                    'border-r',
                     'align-top',
+                    'p-2',
+                    'border-r',
                     { 'text-red-400': i === 0 },
                     { 'text-red-400': isHoliday },
                     { 'font-bold': isTarget },
                   )}
                 >
-                  <div>{dateInfo.date}</div>
-                  <div>{dateInfo.rokuyo}</div>
-                  <div>{dateInfo.schedules.map((schedule: ScheduleInfo) => schedule.name).join(',')}</div>
+                  <div className="flex justify-between">
+                    <div className="font-bold">{dateInfo.date}</div>
+                    <div>{dateInfo.rokuyo}</div>
+                  </div>
+                  <ul className="text-xs py-4">
+                    {dateInfo.schedules.map((schedule: ScheduleInfo, i) => (
+                      <li key={`weely-calendar-schedule-${schedule.date}-${i}`}>{schedule.name}</li>
+                    ))}
+                  </ul>
                 </td>
               );
             })}
