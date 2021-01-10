@@ -39,37 +39,38 @@ export function render(
   ctx.textBaseline = 'top';
   ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
 
+  let y = 80;
+
   const yearText = `${dateInfo.year}年`;
   const sizeOfYearText = ctx.measureText(yearText);
-  const yearTextY = 80;
-  ctx.fillText(yearText, width / 2 - sizeOfYearText.width - styles.fontSize / 4, yearTextY);
-  ctx.fillText(dateInfo.yearJa, width / 2 + styles.fontSize / 4, yearTextY);
+  ctx.fillText(yearText, width / 2 - sizeOfYearText.width - styles.fontSize / 4, y);
+  ctx.fillText(dateInfo.yearJa, width / 2 + styles.fontSize / 4, y);
 
   const monthText = `${dateInfo.month}月`;
   const sizeOfMonthText = ctx.measureText(monthText);
-  const monthTextY = yearTextY + styles.fontSize + styles.fontSize / 2;
-  ctx.fillText(monthText, width / 2 - sizeOfMonthText.width - styles.fontSize / 4, monthTextY);
-  ctx.fillText(dateInfo.monthJa, width / 2 + styles.fontSize / 4, monthTextY);
+  y = y + styles.fontSize + styles.fontSize / 2;
+  ctx.fillText(monthText, width / 2 - sizeOfMonthText.width - styles.fontSize / 4, y);
+  ctx.fillText(dateInfo.monthJa, width / 2 + styles.fontSize / 4, y);
 
   ctx.font = `bold ${styles.fontSize * 8}px ${styles.fontFamily}`;
 
-  const dateY = monthTextY + styles.fontSize * 2;
+  y = y + styles.fontSize * 2;
   const sizeOfDate = ctx.measureText(dateInfo.date);
-  ctx.fillText(dateInfo.date, (width - sizeOfDate.width) / 2, dateY);
+  ctx.fillText(dateInfo.date, (width - sizeOfDate.width) / 2, y);
 
   ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
 
-  const dayY = dateY + styles.fontSize * 9;
+  y = y + styles.fontSize * 9;
   const sizeOfDay = ctx.measureText(dateInfo.dayJa);
-  ctx.fillText(dateInfo.dayJa, width / 2 - sizeOfDay.width - styles.fontSize / 4, dayY);
-  ctx.fillText(dateInfo.rokuyo, width / 2 + styles.fontSize / 4, dayY);
+  ctx.fillText(dateInfo.dayJa, width / 2 - sizeOfDay.width - styles.fontSize / 4, y);
+  ctx.fillText(dateInfo.rokuyo, width / 2 + styles.fontSize / 4, y);
 
-  const scheduleY = dayY + styles.fontSize * 3;
+  y = y + styles.fontSize * 3;
   for (let i = 0; i < dateInfo.schedules.length; i += 1) {
     const schedule = dateInfo.schedules[i];
     const sizeOfSchedule = ctx.measureText(schedule.name);
     const sizeOfScheduleLabel = ctx.measureText(schedule.labelJa);
-    const y = scheduleY + i * (styles.fontSize + styles.fontSize / 2);
+    y = y + i * (styles.fontSize + styles.fontSize / 2);
     ctx.fillStyle = '#aaa'; // TODO
     ctx.fillText(
       schedule.labelJa,
