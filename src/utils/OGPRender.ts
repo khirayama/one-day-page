@@ -25,11 +25,12 @@ export function render(
 
   const styles = {
     padding: 80,
-    background: '#fff', // TODO
-    fontSize: 48,
+    background: '#fff',
+    fontSize: 44,
     fontFamily:
       'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-    color: '#333',
+    color: '#333', // TODO
+    color2: '#aaa', // TODO
   };
 
   ctx.fillStyle = styles.background;
@@ -39,7 +40,7 @@ export function render(
   ctx.textBaseline = 'top';
   ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
 
-  let y = 80;
+  let y = styles.fontSize * 1.5;
 
   const yearText = `${dateInfo.year}年`;
   const sizeOfYearText = ctx.measureText(yearText);
@@ -65,13 +66,13 @@ export function render(
   ctx.fillText(dateInfo.dayJa, width / 2 - sizeOfDay.width - styles.fontSize / 4, y);
   ctx.fillText(dateInfo.rokuyo, width / 2 + styles.fontSize / 4, y);
 
-  y = y + styles.fontSize * 3;
+  y = y + styles.fontSize;
   for (let i = 0; i < dateInfo.schedules.length; i += 1) {
     const schedule = dateInfo.schedules[i];
     const sizeOfSchedule = ctx.measureText(schedule.name);
     const sizeOfScheduleLabel = ctx.measureText(schedule.labelJa);
-    y = y + i * (styles.fontSize + styles.fontSize / 2);
-    ctx.fillStyle = '#aaa'; // TODO
+    y = y + (styles.fontSize + styles.fontSize / 2);
+    ctx.fillStyle = styles.color2;
     ctx.fillText(
       schedule.labelJa,
       (width - sizeOfSchedule.width) / 2 - sizeOfScheduleLabel.width - styles.fontSize / 4,
@@ -81,16 +82,26 @@ export function render(
     ctx.fillText(schedule.name, (width - sizeOfSchedule.width) / 2, y);
   }
 
-  let l = 1;
-  for (const schedule of [data.nextNationalholiday, data.nextSolarterm, data.nextSpecialterm]) {
-    l += 1;
-    ctx.fillText('次の' + schedule.labelJa, 10, 50 * l);
-    l += 1;
+  // y = y + styles.fontSize * 3;
+  const nextSchedules = [data.nextNationalholiday, data.nextSolarterm, data.nextSpecialterm];
+  let yFromBottom = height - styles.fontSize * 1.5;
+  for (let i = nextSchedules.length - 1; i >= 0; i -= 1) {
+    const schedule = nextSchedules[i];
     const scheduleDate = dayjs(schedule.date);
+
+    const scheduleText = `${scheduleDate.format('M月D日')}(${scheduleDate.diff(date, 'day')}日後) ${schedule.name}`;
+    const scheduleLabelText = '次の' + schedule.labelJa;
+    const sizeOfSchedule = ctx.measureText(scheduleText);
+    const sizeOfScheduleLabel = ctx.measureText(scheduleLabelText);
+    yFromBottom -= styles.fontSize;
+    ctx.fillStyle = styles.color2;
     ctx.fillText(
-      `${scheduleDate.format('M月D日')}(${scheduleDate.diff(date, 'day')}日後) ${schedule.name}`,
-      10,
-      50 * l,
+      '次の' + schedule.labelJa,
+      width - sizeOfSchedule.width - styles.fontSize - sizeOfScheduleLabel.width - styles.fontSize,
+      yFromBottom,
     );
+    ctx.fillStyle = styles.color;
+    ctx.fillText(scheduleText, width - sizeOfSchedule.width - styles.fontSize * 1.5, yFromBottom);
+    yFromBottom -= styles.fontSize * 0.5;
   }
 }
