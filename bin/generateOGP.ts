@@ -9,7 +9,6 @@ import { render } from '../src/utils/OGPRender';
 (() => {
   const d = dayjs();
   const fmt = 'YYYY-MM-DD';
-  const size = 1200;
 
   const date = d.format(fmt);
   const frm = d.add(1, 'day').format(fmt);
@@ -23,16 +22,12 @@ import { render } from '../src/utils/OGPRender';
     services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
     services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
   ]).then(([dInfo, nationalholidays, solarterms, specialterms]) => {
-    render(
-      canvas,
-      {
-        dateInfo: dInfo,
-        nextNationalholiday: nationalholidays[0],
-        nextSolarterm: solarterms[0],
-        nextSpecialterm: specialterms[0],
-      },
-      { width: size, height: size },
-    );
+    render(canvas, {
+      dateInfo: dInfo,
+      nextNationalholiday: nationalholidays[0],
+      nextSolarterm: solarterms[0],
+      nextSpecialterm: specialterms[0],
+    });
     let b64 = canvas.toDataURL().split(',');
     let img = decode(b64[1]);
 

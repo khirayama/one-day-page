@@ -8,7 +8,6 @@ import { render } from '../utils/OGPRender';
 export default function CanvasPreviewPage() {
   const canvasRef = React.useRef();
   const fmt = 'YYYY-MM-DD';
-  const size = 1200;
 
   let d = dayjs();
   if (typeof window === 'object') {
@@ -29,16 +28,12 @@ export default function CanvasPreviewPage() {
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
     ]).then(([dInfo, nationalholidays, solarterms, specialterms]) => {
-      render(
-        canvasRef.current,
-        {
-          dateInfo: dInfo,
-          nextNationalholiday: nationalholidays[0],
-          nextSolarterm: solarterms[0],
-          nextSpecialterm: specialterms[0],
-        },
-        { width: size, height: size },
-      );
+      render(canvasRef.current, {
+        dateInfo: dInfo,
+        nextNationalholiday: nationalholidays[0],
+        nextSolarterm: solarterms[0],
+        nextSpecialterm: specialterms[0],
+      });
     });
   }, []);
 

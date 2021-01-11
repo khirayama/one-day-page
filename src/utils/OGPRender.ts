@@ -11,12 +11,11 @@ export function render(
     nextSolarterm: ScheduleInfo;
     nextSpecialterm: ScheduleInfo;
   },
-  options?: { width?: number; height?: number },
 ) {
   const dateInfo = data.dateInfo;
   const date = dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`).format('YYYY-MM-DD');
-  let width = options.width || 1200;
-  let height = options.height || 1200;
+  let width = 1200;
+  let height = 1200;
 
   canvas.width = width;
   canvas.height = height;
