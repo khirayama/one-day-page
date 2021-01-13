@@ -19,7 +19,7 @@ export function Ingredients(props: {
         props.seasonalOthers,
       ].map((ingredients: IngredientInfo[], i) => {
         return (
-          <div key={`ingredient-${i}`}>
+          <div key={`ingredient-${i}`} className="p-4">
             <ul>
               {ingredients.map((ingredient: IngredientInfo) => {
                 return (
