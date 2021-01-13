@@ -244,7 +244,6 @@ export default function IndexPage() {
         }}
       />
 
-      <h2>旬の食べ物</h2>
       <Ingredients
         seasonalVegetables={seasonalVegetables}
         seasonalFruits={seasonalFruits}
