@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "next",
+    "build": "next build",
+    "start": "next start -p $PORT",
     "test": "jest",
     "lint": "eslint '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",
     "lint:fix": "eslint --fix '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",

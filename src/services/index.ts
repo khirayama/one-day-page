@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_URL || 'http://localhost:4000';
+
 const req = axios.create({
-  baseURL: 'http://localhost:4000',
+  baseURL: BASE_URL,
 });
 
 export type ScheduleInfo = {
