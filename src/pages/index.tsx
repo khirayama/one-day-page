@@ -1,6 +1,7 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
 import queryString from 'query-string';
+import Head from 'next/head';
 
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 import { WeeklyCalendar } from '../components/WeeklyCalendar';
@@ -118,139 +119,152 @@ export default function IndexPage() {
     seasonalOthers === null ? (
     '読み込み中'
   ) : (
-    <div className="max-w-screen-sm mx-auto">
-      <header className="py-4 px-2">
-        <div className="text-center pt-2 pb-10">
-          <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
-            <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
-            <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
-          </div>
-          <div className="box-content h-4 py-1 leading-4 relative">
-            <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
-            <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
-          </div>
-          <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
-          <div className="box-content h-4 py-1 leading-4 relative">
-            <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
-            <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
+    <>
+      <Head>
+        <meta property="og:url" content="/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="" />
+        <meta property="og:description" content="" />
+        <meta property="og:site_name" content="" />
+        <meta property="og:image" content="/images/hoge.png" />
+      </Head>
+      <div className="max-w-screen-sm mx-auto">
+        <header className="py-4 px-2">
+          <div className="text-center pt-28 pb-20">
+            <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
+            </div>
+            <div className="box-content h-4 py-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
+            </div>
+            <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
+            <div className="box-content h-4 py-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
+            </div>
+
+            <div className="py-8">
+              {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
+                return (
+                  <div key={schedule.name}>
+                    <div className="text-center">
+                      <span className="relative">
+                        <span className="absolute right-full pr-2 text-gray-400 w-max">{schedule.labelJa}</span>
+                        <span>{schedule.name}</span>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="py-8">
-            {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
+          <div className="text-right py-4">
+            {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
+              const scheduleDate = dayjs(scheduleInfo.date);
               return (
-                <div key={schedule.name}>
-                  <div className="text-center">
-                    <span className="relative">
-                      <span className="absolute right-full pr-2 text-gray-400 w-max">{schedule.labelJa}</span>
-                      <span>{schedule.name}</span>
-                    </span>
-                  </div>
+                <div key={scheduleInfo.label + scheduleInfo.date}>
+                  <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
+                  <span>
+                    {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
+                  </span>
                 </div>
               );
             })}
           </div>
-        </div>
+        </header>
 
-        <div className="text-right py-4">
-          {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
-            const scheduleDate = dayjs(scheduleInfo.date);
-            return (
-              <div key={scheduleInfo.label + scheduleInfo.date}>
-                <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
-                <span>
-                  {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </header>
+        <WeeklyCalendar
+          date={date}
+          weeklyCalendar={weeklyCalendar}
+          onPrevWeekButtonClick={() => {
+            const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
+            services
+              .fetchCalendar({ from: prevFirstDayOfWeek, to: dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt) })
+              .then((weekCal: DateInfo[]) => {
+                setFirstDayOfWeek(prevFirstDayOfWeek);
+                setWeeklyCalendar(weekCal);
+              });
+          }}
+          onCurrentWeekButtonClick={() => {
+            const currentFirstDayOfWeek = d.add(-1 * d.get('day'), 'day').format(fmt);
+            services
+              .fetchCalendar({
+                from: currentFirstDayOfWeek,
+                to: dayjs(currentFirstDayOfWeek).add(6, 'day').format(fmt),
+              })
+              .then((weekCal: DateInfo[]) => {
+                setFirstDayOfWeek(currentFirstDayOfWeek);
+                setWeeklyCalendar(weekCal);
+              });
+          }}
+          onNextWeekButtonClick={() => {
+            const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
+            setFirstDayOfWeek(nextFirstDayOfWeek);
+            services
+              .fetchCalendar({ from: nextFirstDayOfWeek, to: dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt) })
+              .then((weekCal: DateInfo[]) => {
+                setWeeklyCalendar(weekCal);
+              });
+          }}
+        />
 
-      <WeeklyCalendar
-        date={date}
-        weeklyCalendar={weeklyCalendar}
-        onPrevWeekButtonClick={() => {
-          const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
-          services
-            .fetchCalendar({ from: prevFirstDayOfWeek, to: dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt) })
-            .then((weekCal: DateInfo[]) => {
-              setFirstDayOfWeek(prevFirstDayOfWeek);
-              setWeeklyCalendar(weekCal);
-            });
-        }}
-        onCurrentWeekButtonClick={() => {
-          const currentFirstDayOfWeek = d.add(-1 * d.get('day'), 'day').format(fmt);
-          services
-            .fetchCalendar({ from: currentFirstDayOfWeek, to: dayjs(currentFirstDayOfWeek).add(6, 'day').format(fmt) })
-            .then((weekCal: DateInfo[]) => {
-              setFirstDayOfWeek(currentFirstDayOfWeek);
-              setWeeklyCalendar(weekCal);
-            });
-        }}
-        onNextWeekButtonClick={() => {
-          const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
-          setFirstDayOfWeek(nextFirstDayOfWeek);
-          services
-            .fetchCalendar({ from: nextFirstDayOfWeek, to: dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt) })
-            .then((weekCal: DateInfo[]) => {
-              setWeeklyCalendar(weekCal);
-            });
-        }}
-      />
+        <MonthlyCalendar
+          date={date}
+          monthlyCalendar={monthlyCalendar}
+          onPrevMonthButtonClick={() => {
+            const current = dayjs(`${currentMonth}-1`);
+            const firstDayOfMonth = current.add(-1, 'month');
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+          onCurrentMonthButtonClick={() => {
+            const firstDayOfMonth = dayjs(d.format('YYYY-MM-01'));
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+          onNextMonthButtonClick={() => {
+            const current = dayjs(`${currentMonth}-1`);
+            const firstDayOfMonth = current.add(1, 'month');
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+        />
 
-      <MonthlyCalendar
-        date={date}
-        monthlyCalendar={monthlyCalendar}
-        onPrevMonthButtonClick={() => {
-          const current = dayjs(`${currentMonth}-1`);
-          const firstDayOfMonth = current.add(-1, 'month');
-          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-          services
-            .fetchCalendar({
-              from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-              to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-            })
-            .then((monthCal: DateInfo[]) => {
-              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-              setMonthlyCalendar(monthCal);
-            });
-        }}
-        onCurrentMonthButtonClick={() => {
-          const firstDayOfMonth = dayjs(d.format('YYYY-MM-01'));
-          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-          services
-            .fetchCalendar({
-              from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-              to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-            })
-            .then((monthCal: DateInfo[]) => {
-              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-              setMonthlyCalendar(monthCal);
-            });
-        }}
-        onNextMonthButtonClick={() => {
-          const current = dayjs(`${currentMonth}-1`);
-          const firstDayOfMonth = current.add(1, 'month');
-          const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-          services
-            .fetchCalendar({
-              from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-              to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-            })
-            .then((monthCal: DateInfo[]) => {
-              setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-              setMonthlyCalendar(monthCal);
-            });
-        }}
-      />
-
-      <Ingredients
-        seasonalVegetables={seasonalVegetables}
-        seasonalFruits={seasonalFruits}
-        seasonalFishes={seasonalFishes}
-        seasonalSeafoods={seasonalSeafoods}
-        seasonalOthers={seasonalOthers}
-      />
-    </div>
+        <Ingredients
+          seasonalVegetables={seasonalVegetables}
+          seasonalFruits={seasonalFruits}
+          seasonalFishes={seasonalFishes}
+          seasonalSeafoods={seasonalSeafoods}
+          seasonalOthers={seasonalOthers}
+        />
+      </div>
+    </>
   );
 }
