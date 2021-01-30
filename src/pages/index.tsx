@@ -131,7 +131,7 @@ export default function IndexPage() {
       </Head>
       <div className="max-w-screen-sm mx-auto">
         <header className="p-4">
-          <div className="text-center pt-28 pb-20">
+          <div className="text-center pt-24 pb-28">
             <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
               <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
               <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
