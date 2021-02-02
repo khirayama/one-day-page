@@ -8,7 +8,6 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "test": "jest",
-    "heroku:release": "heroku container:push web && heroku container:release web",
     "lint": "eslint '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",
     "lint:fix": "eslint --fix '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",
     "check": "npx npm-check-updates"
