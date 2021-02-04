@@ -4,7 +4,6 @@ import queryString from 'query-string';
 import Head from 'next/head';
 
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
-import { WeeklyCalendar } from '../components/WeeklyCalendar';
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
 import { Ingredients } from '../components/Ingredients';
 
@@ -26,7 +25,6 @@ export default function IndexPage() {
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
   const [nextSolarterm, setNextSolarterm] = React.useState(null);
   const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
-  const [weeklyCalendar, setWeeklyCalendar] = React.useState(null);
   const [monthlyCalendar, setMonthlyCalendar] = React.useState(null);
   const [seasonalVegetables, setSeasonalVegetables] = React.useState(null);
   const [seasonalFruits, setSeasonalFruits] = React.useState(null);
@@ -110,7 +108,6 @@ export default function IndexPage() {
     nextNationalholiday === null ||
     nextSolarterm === null ||
     nextSpecialterm === null ||
-    weeklyCalendar === null ||
     monthlyCalendar === null ||
     seasonalVegetables === null ||
     seasonalFruits === null ||
@@ -176,41 +173,6 @@ export default function IndexPage() {
             })}
           </div>
         </header>
-
-        <WeeklyCalendar
-          date={date}
-          weeklyCalendar={weeklyCalendar}
-          onPrevWeekButtonClick={() => {
-            const prevFirstDayOfWeek = dayjs(firstDayOfWeek).add(-7, 'day').format(fmt);
-            services
-              .fetchCalendar({ from: prevFirstDayOfWeek, to: dayjs(prevFirstDayOfWeek).add(6, 'day').format(fmt) })
-              .then((weekCal: DateInfo[]) => {
-                setFirstDayOfWeek(prevFirstDayOfWeek);
-                setWeeklyCalendar(weekCal);
-              });
-          }}
-          onCurrentWeekButtonClick={() => {
-            const currentFirstDayOfWeek = d.add(-1 * d.get('day'), 'day').format(fmt);
-            services
-              .fetchCalendar({
-                from: currentFirstDayOfWeek,
-                to: dayjs(currentFirstDayOfWeek).add(6, 'day').format(fmt),
-              })
-              .then((weekCal: DateInfo[]) => {
-                setFirstDayOfWeek(currentFirstDayOfWeek);
-                setWeeklyCalendar(weekCal);
-              });
-          }}
-          onNextWeekButtonClick={() => {
-            const nextFirstDayOfWeek = dayjs(firstDayOfWeek).add(7, 'day').format(fmt);
-            setFirstDayOfWeek(nextFirstDayOfWeek);
-            services
-              .fetchCalendar({ from: nextFirstDayOfWeek, to: dayjs(nextFirstDayOfWeek).add(6, 'day').format(fmt) })
-              .then((weekCal: DateInfo[]) => {
-                setWeeklyCalendar(weekCal);
-              });
-          }}
-        />
 
         <MonthlyCalendar
           date={date}
