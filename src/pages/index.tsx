@@ -55,15 +55,6 @@ export default function IndexPage() {
         setNextSpecialterm(scheduleInfo[0]);
       });
 
-    services
-      .fetchCalendar({
-        from: firstDayOfWeek,
-        to: dayjs(firstDayOfWeek).add(6, 'day').format(fmt),
-      })
-      .then((weekCal: DateInfo[]) => {
-        setWeeklyCalendar(weekCal);
-      });
-
     const firstDayOfMonth = dayjs(`${currentMonth}-1`);
     const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
     services
