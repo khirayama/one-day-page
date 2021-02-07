@@ -37,7 +37,8 @@ export function render(
 
   ctx.fillStyle = styles.color;
   ctx.textBaseline = 'top';
-  ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
+  // ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
+  ctx.font = `${styles.fontSize}px`;
 
   let y = styles.fontSize * 1.5;
 
