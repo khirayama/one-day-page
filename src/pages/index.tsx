@@ -19,7 +19,6 @@ export default function IndexPage() {
   }
 
   const [date] = React.useState(d.format(fmt));
-  const [firstDayOfWeek, setFirstDayOfWeek] = React.useState(d.add(-1 * d.get('day'), 'day').format(fmt));
   const [currentMonth, setCurrentMonth] = React.useState(d.format('YYYY-MM'));
   const [dateInfo, setDateInfo] = React.useState(null);
   const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
