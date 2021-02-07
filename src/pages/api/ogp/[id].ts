@@ -6,7 +6,7 @@ import { createCanvas } from 'canvas';
 import { services } from '../../../services';
 import { render } from '../../../utils/OGPRender';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const id = req.query.id;
   const dateString = (Array.isArray(id) ? id.join('') : id).replace('.png', '');
 
@@ -32,7 +32,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     // [Send file as response Discussion #15453 vercel/next.js](https://github.com/vercel/next.js/discussions/15453#discussioncomment-41926)
-    res.setHeader('Content-Type', 'image/jpg');
+    res.setHeader('Content-Type', 'image/png');
     res.send(canvas.toBuffer());
   });
 }
