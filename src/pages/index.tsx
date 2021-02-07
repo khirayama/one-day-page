@@ -114,7 +114,7 @@ export default function IndexPage() {
         <meta property="og:title" content="" />
         <meta property="og:description" content="" />
         <meta property="og:site_name" content="" />
-        <meta property="og:image" content={`/images/ogp/${date}.png`} />
+        <meta property="og:image" content={`/api/ogp/${date}.png`} />
       </Head>
       <div className="max-w-screen-sm mx-auto">
         <header className="p-4">
