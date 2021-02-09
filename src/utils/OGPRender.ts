@@ -1,5 +1,7 @@
+import * as path from 'path';
+
 import dayjs from 'dayjs';
-import { Canvas } from 'canvas';
+import { Canvas, registerFont } from 'canvas';
 
 import { DateInfo, ScheduleInfo } from '../services';
 
@@ -26,19 +28,22 @@ export function render(
     padding: 80,
     background: '#fff',
     fontSize: 44,
-    fontFamily:
-      'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    // fontFamily:
+    //   'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    fontFamily: 'NotoSansJP-Regular.otf',
     color: '#333', // TODO
     color2: '#aaa', // TODO
   };
+  const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
+  registerFont(fontPath, { family: styles.fontFamily });
 
   ctx.fillStyle = styles.background;
   ctx.fillRect(0, 0, width, height);
 
   ctx.fillStyle = styles.color;
   ctx.textBaseline = 'top';
-  // ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
-  ctx.font = `${styles.fontSize}px`;
+  ctx.font = `${styles.fontSize}px ${styles.fontFamily}`;
+  // ctx.font = `${styles.fontSize}px`;
 
   let y = styles.fontSize * 1.5;
 
