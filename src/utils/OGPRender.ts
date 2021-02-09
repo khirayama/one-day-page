@@ -34,21 +34,12 @@ export function render(
   };
 
   if (typeof window === 'undefined') {
-    // const path = require('path');
-    const fs = require('fs');
-    fs.readdirSync('.', (err: any, files: any) => {
-      if (err) throw err;
-      const fileList = files.filter((file: any) => {
-        return fs.statSync(file).isFile();
-      });
-      throw new Error(fileList.join(','));
-      console.log(fileList);
-    });
+    const path = require('path');
     // const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
     // registerFont(fontPath, { family: styles.fontFamily });
     // registerFont(`./public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
-    // registerFont(path.join('fonts', styles.fontFamily), { family: styles.fontFamily });
-    registerFont(`/public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
+    registerFont(path.resolve(`./public/fonts/${styles.fontFamily}`), { family: styles.fontFamily });
+    // registerFont(`/public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
   }
 
   ctx.fillStyle = styles.background;
