@@ -1,5 +1,3 @@
-import * as path from 'path';
-
 import dayjs from 'dayjs';
 import { Canvas, registerFont } from 'canvas';
 
@@ -34,8 +32,11 @@ export function render(
     color: '#333', // TODO
     color2: '#aaa', // TODO
   };
-  const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
-  registerFont(fontPath, { family: styles.fontFamily });
+  if (typeof window === 'undefined') {
+    const path = require('path');
+    const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
+    registerFont(fontPath, { family: styles.fontFamily });
+  }
 
   ctx.fillStyle = styles.background;
   ctx.fillRect(0, 0, width, height);
