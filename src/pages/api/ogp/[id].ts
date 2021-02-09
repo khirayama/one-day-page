@@ -6,7 +6,7 @@ import { createCanvas } from 'canvas';
 import { services } from '../../../services';
 import { render } from '../../../utils/OGPRender';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const id = req.query.id;
   const dateString = (Array.isArray(id) ? id.join('') : id).replace('.png', '');
 
