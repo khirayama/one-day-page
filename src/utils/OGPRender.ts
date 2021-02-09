@@ -39,7 +39,7 @@ export function render(
     // registerFont(fontPath, { family: styles.fontFamily });
     // registerFont(`./public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
     registerFont(path.join('fonts', styles.fontFamily), { family: styles.fontFamily });
-    registerFont(`/var/task/public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
+    // registerFont(`/var/task/public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
   }
 
   ctx.fillStyle = styles.background;
