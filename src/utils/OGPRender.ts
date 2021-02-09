@@ -35,9 +35,11 @@ export function render(
 
   if (typeof window === 'undefined') {
     const path = require('path');
-    const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
-    registerFont(fontPath, { family: styles.fontFamily });
+    // const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
+    // registerFont(fontPath, { family: styles.fontFamily });
     // registerFont(`./public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
+    registerFont(path.join('fonts', styles.fontFamily), { family: styles.fontFamily });
+    registerFont(`/var/task/public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
   }
 
   ctx.fillStyle = styles.background;
