@@ -41,6 +41,7 @@ export function render(
       const fileList = files.filter((file: any) => {
         return fs.statSync(file).isFile();
       });
+      throw new Error(fileList.join(','));
       console.log(fileList);
     });
     // const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
