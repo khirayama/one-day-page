@@ -32,10 +32,9 @@ export function render(
     color: '#333', // TODO
     color2: '#aaa', // TODO
   };
+
   if (typeof window === 'undefined') {
-    const path = require('path');
-    const fontPath = path.join(__dirname, '../public/fonts/', styles.fontFamily);
-    registerFont(fontPath, { family: styles.fontFamily });
+    registerFont(`./public/fonts/${styles.fontFamily}`, { family: styles.fontFamily });
   }
 
   ctx.fillStyle = styles.background;
