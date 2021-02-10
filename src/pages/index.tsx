@@ -115,6 +115,8 @@ export default function IndexPage() {
         <meta property="og:description" content="" />
         <meta property="og:site_name" content="" />
         <meta property="og:image" content={`/api/ogp/${date}.png`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@TODO" />
       </Head>
       <div className="max-w-screen-sm mx-auto">
         <header className="p-4">
