@@ -9,6 +9,7 @@ import { Ingredients } from '../components/Ingredients';
 const fmt = 'YYYY-MM-DD';
 
 type IndexPageProps = {
+  host: string;
   date: string;
   currentMonth: string;
   dateInfo: DateInfo;
@@ -40,14 +41,12 @@ export default function IndexPage(props: IndexPageProps) {
   const [currentMonth, setCurrentMonth] = React.useState(props.currentMonth);
   const [monthlyCalendar, setMonthlyCalendar] = React.useState(props.monthlyCalendar);
 
-  // TODO BASE_URLをまとめる
   // TODO metaInfoを更新
-  const BASE_URL = 'https://season-green.vercel.app';
   const metaInfo = {
     title: '日めくりカレンダー',
     description: '日常の解像度を少し高く。',
     siteName: '現代日めくりカレンダー',
-    image: `${BASE_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
+    image: `//${props.host}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
     imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
     twitter: '@TODO',
   };
@@ -177,7 +176,15 @@ export default function IndexPage(props: IndexPageProps) {
   );
 }
 
-export async function getServerSideProps(context): Promise<IndexPageProps> {
+export async function getServerSideProps(context: {
+  query: { [key: string]: string | string[] };
+  req: {
+    headers: {
+      host: string;
+    };
+  };
+}): Promise<IndexPageProps> {
+  const host = context.req.headers.host;
   const date = context.query.date ? dayjs(context.query.date).format(fmt) : dayjs().format(fmt);
 
   const d = dayjs(date);
@@ -220,6 +227,7 @@ export async function getServerSideProps(context): Promise<IndexPageProps> {
     ]) => {
       return {
         props: {
+          host,
           date: d.format(fmt),
           currentMonth,
           dateInfo,
