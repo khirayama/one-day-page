@@ -43,19 +43,19 @@ export default function IndexPage(props: IndexPageProps) {
 
   // TODO metaInfoを更新
   const metaInfo = {
-    title: d.format('YYYY年M月D日の日めくりカレンダー'),
-    description: '日常の解像度を少し高く。',
-    keywords: ['日めくりカレンダー', '暦'],
-    siteName: '現代日めくりカレンダー',
+    title: d.format(`YYYY年M月D日の日めくりカレンダー`),
+    description: `${dateInfo.dayJa}、${dateInfo.rokuyo}。`,
+    keywords: config.keywords,
+    siteName: config.name,
     image: `${config.APP_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
-    imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
+    imageAlt: d.format('YYYY年M月D日の日めくりカレンダー'),
     twitter: '@TODO',
   };
 
   return (
     <>
       <Head>
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="/api/manifest" />
         <title>{metaInfo.title}</title>
         <meta name="description" content={metaInfo.description} />
         <meta name="keyword" content={metaInfo.keywords.join(',')} />
