@@ -43,7 +43,7 @@ export default function IndexPage(props: IndexPageProps) {
 
   // TODO metaInfoを更新
   const metaInfo = {
-    title: '日めくりカレンダー',
+    title: d.format('YYYY年M月D日の日めくりカレンダー'),
     description: '日常の解像度を少し高く。',
     keywords: ['日めくりカレンダー', '暦'],
     siteName: '現代日めくりカレンダー',
@@ -85,7 +85,7 @@ export default function IndexPage(props: IndexPageProps) {
               <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
               <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
             </div>
-            <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
+            <div className="text-9xl font-bold py-1 tracking-tighter">{dateInfo.date}</div>
             <div className="box-content h-4 py-1 leading-4 relative">
               <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
               <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
