@@ -4,6 +4,7 @@ export const config = {
   API_URL: 'https://radiant-badlands-93029.herokuapp.com',
 
   // TODO ちゃんと考える
+  lang: 'ja',
   name: '日めくりカレンダー',
   shortName: '日めくり',
   description: '日常の解像度を少し高く。',

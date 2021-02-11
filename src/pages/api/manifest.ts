@@ -4,7 +4,7 @@ import { config } from '../../config';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.json({
-    lang: 'ja',
+    lang: config.lang,
     name: config.name,
     short_name: config.shortName,
     description: config.description,
