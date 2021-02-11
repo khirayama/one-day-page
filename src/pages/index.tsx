@@ -7,9 +7,9 @@ import { MonthlyCalendar } from '../components/MonthlyCalendar';
 import { Ingredients } from '../components/Ingredients';
 
 const fmt = 'YYYY-MM-DD';
+const BASE_URL = 'https://season-green.vercel.app';
 
 type IndexPageProps = {
-  host: string;
   date: string;
   currentMonth: string;
   dateInfo: DateInfo;
@@ -46,7 +46,7 @@ export default function IndexPage(props: IndexPageProps) {
     title: '日めくりカレンダー',
     description: '日常の解像度を少し高く。',
     siteName: '現代日めくりカレンダー',
-    image: `//${props.host}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
+    image: `${BASE_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
     imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
     twitter: '@TODO',
   };
@@ -178,13 +178,7 @@ export default function IndexPage(props: IndexPageProps) {
 
 export async function getServerSideProps(context: {
   query: { [key: string]: string };
-  req: {
-    headers: {
-      host: string;
-    };
-  };
 }): Promise<{ props: IndexPageProps }> {
-  const host = context.req.headers.host;
   const date = context.query.date ? dayjs(context.query.date).format(fmt) : dayjs().format(fmt);
 
   const d = dayjs(date);
@@ -227,7 +221,6 @@ export async function getServerSideProps(context: {
     ]) => {
       return {
         props: {
-          host,
           date: d.format(fmt),
           currentMonth,
           dateInfo,
