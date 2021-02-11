@@ -8,84 +8,37 @@ import { Ingredients } from '../components/Ingredients';
 
 const fmt = 'YYYY-MM-DD';
 
-export default function IndexPage(props: { date: string }) {
+type IndexPageProps = {
+  date: string;
+  currentMonth: string;
+  dateInfo: DateInfo;
+  nextNationalholiday: ScheduleInfo;
+  nextSolarterm: ScheduleInfo;
+  nextSpecialterm: ScheduleInfo;
+  monthlyCalendar: DateInfo[];
+  seasonalVegetables: IngredientInfo[];
+  seasonalFruits: IngredientInfo[];
+  seasonalFishes: IngredientInfo[];
+  seasonalSeafoods: IngredientInfo[];
+  seasonalOthers: IngredientInfo[];
+};
+
+export default function IndexPage(props: IndexPageProps) {
   const d = dayjs(props.date);
 
+  const dateInfo = props.dateInfo;
+  const nextNationalholiday = props.nextNationalholiday;
+  const nextSolarterm = props.nextSolarterm;
+  const nextSpecialterm = props.nextSpecialterm;
+  const seasonalVegetables = props.seasonalVegetables;
+  const seasonalFruits = props.seasonalFruits;
+  const seasonalFishes = props.seasonalFishes;
+  const seasonalSeafoods = props.seasonalSeafoods;
+  const seasonalOthers = props.seasonalOthers;
+
   const [date] = React.useState(d.format(fmt));
-  const [currentMonth, setCurrentMonth] = React.useState(d.format('YYYY-MM'));
-  const [dateInfo, setDateInfo] = React.useState(null);
-  const [nextNationalholiday, setNextNationalholiday] = React.useState(null);
-  const [nextSolarterm, setNextSolarterm] = React.useState(null);
-  const [nextSpecialterm, setNextSpecialterm] = React.useState(null);
-  const [monthlyCalendar, setMonthlyCalendar] = React.useState(null);
-  const [seasonalVegetables, setSeasonalVegetables] = React.useState(null);
-  const [seasonalFruits, setSeasonalFruits] = React.useState(null);
-  const [seasonalFishes, setSeasonalFishes] = React.useState(null);
-  const [seasonalSeafoods, setSeasonalSeafoods] = React.useState(null);
-  const [seasonalOthers, setSeasonalOthers] = React.useState(null);
-
-  React.useEffect(() => {
-    const frm = d.add(1, 'day').format(fmt);
-    const to = d.add(12, 'month').format(fmt);
-
-    services.fetchDate(date).then((dInfo: DateInfo) => {
-      setDateInfo(dInfo);
-    });
-    services
-      .fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' })
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextNationalholiday(scheduleInfo[0]);
-      });
-    services
-      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' })
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextSolarterm(scheduleInfo[0]);
-      });
-    services
-      .fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' })
-      .then((scheduleInfo: ScheduleInfo[]) => {
-        setNextSpecialterm(scheduleInfo[0]);
-      });
-
-    const firstDayOfMonth = dayjs(`${currentMonth}-1`);
-    const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-    services
-      .fetchCalendar({
-        from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-        to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-      })
-      .then((monthCal: DateInfo[]) => {
-        setMonthlyCalendar(monthCal);
-      });
-
-    const month = d.get('month') + 1;
-    const limit = 3;
-    services
-      .fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' })
-      .then((ingredients: IngredientInfo[]) => {
-        setSeasonalVegetables(ingredients);
-      });
-    services
-      .fetchIngredients({ from: month, to: month, limit, labels: 'fruit' })
-      .then((ingredients: IngredientInfo[]) => {
-        setSeasonalFruits(ingredients);
-      });
-    services
-      .fetchIngredients({ from: month, to: month, limit, labels: 'fish' })
-      .then((ingredients: IngredientInfo[]) => {
-        setSeasonalFishes(ingredients);
-      });
-    services
-      .fetchIngredients({ from: month, to: month, limit, labels: 'seafood' })
-      .then((ingredients: IngredientInfo[]) => {
-        setSeasonalSeafoods(ingredients);
-      });
-    services
-      .fetchIngredients({ from: month, to: month, limit, labels: 'other' })
-      .then((ingredients: IngredientInfo[]) => {
-        setSeasonalOthers(ingredients);
-      });
-  }, []);
+  const [currentMonth, setCurrentMonth] = React.useState(props.currentMonth);
+  const [monthlyCalendar, setMonthlyCalendar] = React.useState(props.monthlyCalendar);
 
   return (
     <>
@@ -111,131 +64,169 @@ export default function IndexPage(props: { date: string }) {
         />
         <meta name="twitter:image:alt" content={date} />
       </Head>
-      {dateInfo === null ||
-      nextNationalholiday === null ||
-      nextSolarterm === null ||
-      nextSpecialterm === null ||
-      monthlyCalendar === null ||
-      seasonalVegetables === null ||
-      seasonalFruits === null ||
-      seasonalFishes === null ||
-      seasonalSeafoods === null ||
-      seasonalOthers === null ? (
-        '読み込み中'
-      ) : (
-        <div className="max-w-screen-sm mx-auto">
-          <header className="p-4">
-            <div className="text-center pt-24 pb-28">
-              <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
-                <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
-                <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
-              </div>
-              <div className="box-content h-4 py-1 leading-4 relative">
-                <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
-                <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
-              </div>
-              <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
-              <div className="box-content h-4 py-1 leading-4 relative">
-                <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
-                <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
-              </div>
-
-              <div className="py-8">
-                {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
-                  return (
-                    <div key={schedule.name}>
-                      <div className="text-center">
-                        <span className="relative">
-                          <span className="absolute right-full pr-2 text-gray-400 w-max">{schedule.labelJa}</span>
-                          <span>{schedule.name}</span>
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+      <div className="max-w-screen-sm mx-auto">
+        <header className="p-4">
+          <div className="text-center pt-24 pb-28">
+            <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
+            </div>
+            <div className="box-content h-4 py-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.month}月</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
+            </div>
+            <div className="text-9xl font-bold py-1">{dateInfo.date}</div>
+            <div className="box-content h-4 py-1 leading-4 relative">
+              <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
+              <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
             </div>
 
-            <div className="text-right py-4">
-              {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
-                const scheduleDate = dayjs(scheduleInfo.date);
+            <div className="py-8">
+              {dateInfo.schedules.map((schedule: DateInfo['schedules'][0]) => {
                 return (
-                  <div key={scheduleInfo.label + scheduleInfo.date}>
-                    <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
-                    <span>
-                      {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
-                    </span>
+                  <div key={schedule.name}>
+                    <div className="text-center">
+                      <span className="relative">
+                        <span className="absolute right-full pr-2 text-gray-400 w-max">{schedule.labelJa}</span>
+                        <span>{schedule.name}</span>
+                      </span>
+                    </div>
                   </div>
                 );
               })}
             </div>
-          </header>
+          </div>
 
-          <MonthlyCalendar
-            date={date}
-            monthlyCalendar={monthlyCalendar}
-            onPrevMonthButtonClick={() => {
-              const current = dayjs(`${currentMonth}-1`);
-              const firstDayOfMonth = current.add(-1, 'month');
-              const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-              services
-                .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-                })
-                .then((monthCal: DateInfo[]) => {
-                  setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
-                });
-            }}
-            onCurrentMonthButtonClick={() => {
-              const firstDayOfMonth = dayjs(d.format('YYYY-MM-01'));
-              const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-              services
-                .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-                })
-                .then((monthCal: DateInfo[]) => {
-                  setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
-                });
-            }}
-            onNextMonthButtonClick={() => {
-              const current = dayjs(`${currentMonth}-1`);
-              const firstDayOfMonth = current.add(1, 'month');
-              const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
-              services
-                .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-                })
-                .then((monthCal: DateInfo[]) => {
-                  setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
-                });
-            }}
-          />
+          <div className="text-right py-4">
+            {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
+              const scheduleDate = dayjs(scheduleInfo.date);
+              return (
+                <div key={scheduleInfo.label + scheduleInfo.date}>
+                  <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
+                  <span>
+                    {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </header>
 
-          <Ingredients
-            seasonalVegetables={seasonalVegetables}
-            seasonalFruits={seasonalFruits}
-            seasonalFishes={seasonalFishes}
-            seasonalSeafoods={seasonalSeafoods}
-            seasonalOthers={seasonalOthers}
-          />
-        </div>
-      )}
+        <MonthlyCalendar
+          date={date}
+          monthlyCalendar={monthlyCalendar}
+          onPrevMonthButtonClick={() => {
+            const current = dayjs(`${currentMonth}-1`);
+            const firstDayOfMonth = current.add(-1, 'month');
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+          onCurrentMonthButtonClick={() => {
+            const firstDayOfMonth = dayjs(d.format('YYYY-MM-01'));
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+          onNextMonthButtonClick={() => {
+            const current = dayjs(`${currentMonth}-1`);
+            const firstDayOfMonth = current.add(1, 'month');
+            const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+            services
+              .fetchCalendar({
+                from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+              })
+              .then((monthCal: DateInfo[]) => {
+                setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
+                setMonthlyCalendar(monthCal);
+              });
+          }}
+        />
+
+        <Ingredients
+          seasonalVegetables={seasonalVegetables}
+          seasonalFruits={seasonalFruits}
+          seasonalFishes={seasonalFishes}
+          seasonalSeafoods={seasonalSeafoods}
+          seasonalOthers={seasonalOthers}
+        />
+      </div>
     </>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context): Promise<IndexPageProps> {
   const date = context.query.date ? dayjs(context.query.date).format(fmt) : dayjs().format(fmt);
 
-  return {
-    props: {
-      date,
+  const d = dayjs(date);
+  const frm = d.add(1, 'day').format(fmt);
+  const to = d.add(12, 'month').format(fmt);
+
+  const currentMonth = d.format('YYYY-MM');
+  const firstDayOfMonth = dayjs(`${currentMonth}-1`);
+  const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
+
+  const month = d.get('month') + 1;
+  const limit = 3;
+
+  return Promise.all([
+    services.fetchDate(date),
+    services.fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' }),
+    services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
+    services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
+    services.fetchCalendar({
+      from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+      to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+    }),
+    services.fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' }),
+    services.fetchIngredients({ from: month, to: month, limit, labels: 'fruit' }),
+    services.fetchIngredients({ from: month, to: month, limit, labels: 'fish' }),
+    services.fetchIngredients({ from: month, to: month, limit, labels: 'seafood' }),
+    services.fetchIngredients({ from: month, to: month, limit, labels: 'other' }),
+  ]).then(
+    ([
+      dateInfo,
+      nationalholidays,
+      solarterms,
+      specialterms,
+      monthlyCalendar,
+      seasonalVegetables,
+      seasonalFruits,
+      seasonalFishes,
+      seasonalSeafoods,
+      seasonalOthers,
+    ]) => {
+      return {
+        props: {
+          date: d.format(fmt),
+          currentMonth,
+          dateInfo,
+          monthlyCalendar,
+          nextNationalholiday: nationalholidays[0],
+          nextSolarterm: solarterms[0],
+          nextSpecialterm: specialterms[0],
+          seasonalVegetables,
+          seasonalFruits,
+          seasonalFishes,
+          seasonalSeafoods,
+          seasonalOthers,
+        },
+      };
     },
-  };
+  );
 }
