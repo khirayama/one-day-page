@@ -40,30 +40,37 @@ export default function IndexPage(props: IndexPageProps) {
   const [currentMonth, setCurrentMonth] = React.useState(props.currentMonth);
   const [monthlyCalendar, setMonthlyCalendar] = React.useState(props.monthlyCalendar);
 
+  // TODO BASE_URLをまとめる
+  // TODO metaInfoを更新
+  const BASE_URL = 'https://season-green.vercel.app';
+  const metaInfo = {
+    title: '日めくりカレンダー',
+    description: '日常の解像度を少し高く。',
+    siteName: '現代日めくりカレンダー',
+    image: `${BASE_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
+    imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
+    twitter: '@TODO',
+  };
+
   return (
     <>
       <Head>
         <link rel="manifest" href="/manifest.json" />
         <meta property="og:url" content="/" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="" />
-        <meta property="og:description" content="" />
-        <meta property="og:site_name" content="" />
-        <meta
-          property="og:image"
-          content={`https://season-green.vercel.app/api/ogp/${date}.png?timestamp=${Date.now().toString()}`}
-        />
-        <meta property="og:image:alt" content={date} />
+        <meta property="og:title" content={metaInfo.title} />
+        <meta property="og:description" content={metaInfo.description} />
+        <meta property="og:site_name" content={metaInfo.siteName} />
+        <meta property="og:image" content={metaInfo.image} />
+        <meta property="og:image:alt" content={metaInfo.imageAlt} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@TODO" />
-        <meta name="twitter:title" content="TODO" />
-        <meta name="twitter:description" content="TODO" />
-        <meta
-          name="twitter:image"
-          content={`https://season-green.vercel.app/api/ogp/${date}.png?timestamp=${Date.now().toString()}`}
-        />
-        <meta name="twitter:image:alt" content={date} />
+        <meta name="twitter:site" content={metaInfo.twitter} />
+        <meta name="twitter:title" content={metaInfo.title} />
+        <meta name="twitter:description" content={metaInfo.description} />
+        <meta name="twitter:image" content={metaInfo.image} />
+        <meta name="twitter:image:alt" content={metaInfo.imageAlt} />
       </Head>
+
       <div className="max-w-screen-sm mx-auto">
         <header className="p-4">
           <div className="text-center pt-24 pb-28">
