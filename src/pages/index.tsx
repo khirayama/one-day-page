@@ -2,12 +2,12 @@ import * as React from 'react';
 import dayjs from 'dayjs';
 import Head from 'next/head';
 
+import { config } from '../config';
 import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
 import { Ingredients } from '../components/Ingredients';
 
 const fmt = 'YYYY-MM-DD';
-const BASE_URL = 'https://season-green.vercel.app';
 
 type IndexPageProps = {
   date: string;
@@ -47,7 +47,7 @@ export default function IndexPage(props: IndexPageProps) {
     description: '日常の解像度を少し高く。',
     keywords: ['日めくりカレンダー', '暦'],
     siteName: '現代日めくりカレンダー',
-    image: `${BASE_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
+    image: `${config.APP_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
     imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
     twitter: '@TODO',
   };

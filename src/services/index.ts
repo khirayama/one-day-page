@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-// const BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_URL || 'http://localhost:4000';
-const BASE_URL = 'https://radiant-badlands-93029.herokuapp.com';
+import { config } from '../config';
 
 const req = axios.create({
-  baseURL: BASE_URL,
+  baseURL: config.API_URL,
 });
 
 export type ScheduleInfo = {
