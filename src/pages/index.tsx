@@ -7,6 +7,8 @@ import { services, DateInfo, ScheduleInfo, IngredientInfo } from '../services';
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
 import { Ingredients } from '../components/Ingredients';
 
+process.env.TZ = 'Asia/Tokyo';
+
 const fmt = 'YYYY-MM-DD';
 
 type IndexPageProps = {
