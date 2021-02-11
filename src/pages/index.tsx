@@ -103,13 +103,19 @@ export default function IndexPage() {
         <meta property="og:title" content="" />
         <meta property="og:description" content="" />
         <meta property="og:site_name" content="" />
-        <meta property="og:image" content={`https://season-green.vercel.app/api/ogp/${date}.png`} />
+        <meta
+          property="og:image"
+          content={`https://season-green.vercel.app/api/ogp/${date}.png?timestamp=${Date.now().toString()}`}
+        />
         <meta property="og:image:alt" content={date} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@TODO" />
         <meta name="twitter:title" content="TODO" />
         <meta name="twitter:description" content="TODO" />
-        <meta name="twitter:image" content={`https://season-green.vercel.app/api/ogp/${date}.png`} />
+        <meta
+          name="twitter:image"
+          content={`https://season-green.vercel.app/api/ogp/${date}.png?timestamp=${Date.now().toString()}`}
+        />
         <meta name="twitter:image:alt" content={date} />
       </Head>
       {dateInfo === null ||

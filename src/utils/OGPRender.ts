@@ -14,8 +14,8 @@ export function render(
 ) {
   const dateInfo = data.dateInfo;
   const date = dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`).format('YYYY-MM-DD');
-  let width = 2400;
-  let height = 1200;
+  let width = 800 * 1.91;
+  let height = 800;
 
   canvas.width = width;
   canvas.height = height;
