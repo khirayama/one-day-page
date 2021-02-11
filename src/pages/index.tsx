@@ -177,13 +177,13 @@ export default function IndexPage(props: IndexPageProps) {
 }
 
 export async function getServerSideProps(context: {
-  query: { [key: string]: string | string[] };
+  query: { [key: string]: string };
   req: {
     headers: {
       host: string;
     };
   };
-}): Promise<IndexPageProps> {
+}): Promise<{ props: IndexPageProps }> {
   const host = context.req.headers.host;
   const date = context.query.date ? dayjs(context.query.date).format(fmt) : dayjs().format(fmt);
 
