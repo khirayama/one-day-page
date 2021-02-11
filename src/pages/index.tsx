@@ -45,6 +45,7 @@ export default function IndexPage(props: IndexPageProps) {
   const metaInfo = {
     title: '日めくりカレンダー',
     description: '日常の解像度を少し高く。',
+    keywords: ['日めくりカレンダー', '暦'],
     siteName: '現代日めくりカレンダー',
     image: `${BASE_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
     imageAlt: d.format('YYYY年MM月DD日のカレンダー'),
@@ -55,6 +56,9 @@ export default function IndexPage(props: IndexPageProps) {
     <>
       <Head>
         <link rel="manifest" href="/manifest.json" />
+        <title>{metaInfo.title}</title>
+        <meta name="description" content={metaInfo.description} />
+        <meta name="keyword" content={metaInfo.keywords.join(',')} />
         <meta property="og:url" content="/" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={metaInfo.title} />
