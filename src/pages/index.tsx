@@ -201,22 +201,24 @@ export async function getServerSideProps(context: {
   const month = d.get('month') + 1;
   const limit = 3;
 
-  return Promise.all([
-    services.fetchDate(date),
-    services.fetchDescription(date),
-    services.fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' }),
-    services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
-    services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
-    services.fetchCalendar({
-      from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-      to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
-    }),
-    services.fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' }),
-    services.fetchIngredients({ from: month, to: month, limit, labels: 'fruit' }),
-    services.fetchIngredients({ from: month, to: month, limit, labels: 'fish' }),
-    services.fetchIngredients({ from: month, to: month, limit, labels: 'seafood' }),
-    services.fetchIngredients({ from: month, to: month, limit, labels: 'other' }),
-  ]).then(
+  return Promise.all(
+    [
+      services.fetchDate(date),
+      services.fetchDescription(date),
+      services.fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' }),
+      services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
+      services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
+      services.fetchCalendar({
+        from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+        to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+      }),
+      services.fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' }),
+      services.fetchIngredients({ from: month, to: month, limit, labels: 'fruit' }),
+      services.fetchIngredients({ from: month, to: month, limit, labels: 'fish' }),
+      services.fetchIngredients({ from: month, to: month, limit, labels: 'seafood' }),
+      services.fetchIngredients({ from: month, to: month, limit, labels: 'other' }),
+    ] as [any, any, any, any, any, any, any, any, any, any, any] /* TODO */,
+  ).then(
     ([
       dateInfo,
       description,
