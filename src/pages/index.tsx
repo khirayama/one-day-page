@@ -13,6 +13,7 @@ const fmt = 'YYYY-MM-DD';
 
 type IndexPageProps = {
   date: string;
+  description: string;
   currentMonth: string;
   dateInfo: DateInfo;
   nextNationalholiday: ScheduleInfo;
@@ -78,7 +79,7 @@ export default function IndexPage(props: IndexPageProps) {
 
       <div className="max-w-screen-sm mx-auto">
         <header className="p-4">
-          <div className="text-center pt-24 pb-28">
+          <div className="text-center pt-24 pb-12">
             <div className="box-content h-4 pt-4 pb-1 leading-4 relative">
               <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
               <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
@@ -108,6 +109,8 @@ export default function IndexPage(props: IndexPageProps) {
               })}
             </div>
           </div>
+
+          <div className="text-left">{props.description}</div>
 
           <div className="text-right py-4">
             {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
@@ -200,6 +203,7 @@ export async function getServerSideProps(context: {
 
   return Promise.all([
     services.fetchDate(date),
+    services.fetchDescription(date),
     services.fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' }),
     services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
     services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
@@ -215,6 +219,7 @@ export async function getServerSideProps(context: {
   ]).then(
     ([
       dateInfo,
+      description,
       nationalholidays,
       solarterms,
       specialterms,
@@ -228,6 +233,7 @@ export async function getServerSideProps(context: {
       return {
         props: {
           date: d.format(fmt),
+          description,
           currentMonth,
           dateInfo,
           monthlyCalendar,
