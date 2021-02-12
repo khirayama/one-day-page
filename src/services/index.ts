@@ -54,6 +54,12 @@ export const services = {
     });
   },
 
+  fetchDescription: (date: String): Promise<string> => {
+    return req.get(`/descriptions/${date}`).then((res) => {
+      return res.data;
+    });
+  },
+
   fetchSchedules: (params: { from: String; to: String; limit?: number; labels?: string }): Promise<ScheduleInfo[]> => {
     return req.get('/schedules', { params }).then((res) => {
       return res.data;
