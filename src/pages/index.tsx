@@ -82,6 +82,10 @@ export default function IndexPage(props: IndexPageProps) {
         <div className="aspect-w-1 aspect-h-1">
           <div>
             <div className="relative w-full h-full">
+              {dateInfo.schedules.filter((schedule) => schedule.label === 'nationalholiday').length !== 0 ? (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-200 w-48 h-48 rounded-full" />
+              ) : null}
+
               <div className="box-content leading-4 absolute bottom-1/2 w-full pb-28">
                 <span className="absolute right-1/2 pr-0.5">{dateInfo.year}年</span>
                 <span className="absolute left-1/2 pl-0.5">{dateInfo.yearJa}</span>
@@ -92,7 +96,7 @@ export default function IndexPage(props: IndexPageProps) {
                 <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
               </div>
 
-              <div className="text-center text-9xl font-bold tracking-tighter absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pr-3 text-gray-800">
+              <div className="text-9xl font-bold tracking-tighter absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pr-4 text-gray-800">
                 {dateInfo.date}
               </div>
 
@@ -132,11 +136,15 @@ export default function IndexPage(props: IndexPageProps) {
         <div className="text-right p-8">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
             const scheduleDate = dayjs(scheduleInfo.date);
+            const diff = scheduleDate.diff(date, 'day');
+            const diffText = diff === 2 ? '(明後日)' : diff === 1 ? '(明日)' : `(${diff}日後)`;
+
             return (
               <div key={scheduleInfo.label + scheduleInfo.date}>
                 <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
                 <span>
-                  {scheduleDate.format('M月D日')}({scheduleDate.diff(date, 'day')}日後) {scheduleInfo.name}
+                  {scheduleDate.format('M月D日')}
+                  {diffText} {scheduleInfo.name}
                 </span>
               </div>
             );
