@@ -76,6 +76,15 @@ export default function IndexPage(props: IndexPageProps) {
         <meta name="twitter:description" content={metaInfo.description} />
         <meta name="twitter:image" content={metaInfo.image} />
         <meta name="twitter:image:alt" content={metaInfo.imageAlt} />
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${config.TRACKING_ID}`}></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${config.TRACKING_ID}');`,
+          }}
+        />
       </Head>
 
       <div className="max-w-screen-sm mx-auto text-gray-600">
