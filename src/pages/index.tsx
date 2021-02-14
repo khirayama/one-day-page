@@ -77,7 +77,7 @@ export default function IndexPage(props: IndexPageProps) {
         <meta name="twitter:image:alt" content={metaInfo.imageAlt} />
       </Head>
 
-      <div className="max-w-screen-sm mx-auto">
+      <div className="max-w-screen-sm mx-auto text-gray-600">
         <div className="aspect-w-1 aspect-h-1">
           <div>
             <div className="relative w-full h-full">
@@ -91,7 +91,7 @@ export default function IndexPage(props: IndexPageProps) {
                 <span className="absolute left-1/2 pl-0.5">{dateInfo.monthJa}</span>
               </div>
 
-              <div className="text-center text-9xl font-bold tracking-tighter absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pr-3">
+              <div className="text-center text-9xl font-bold tracking-tighter absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pr-3 text-gray-800">
                 {dateInfo.date}
               </div>
 
@@ -118,9 +118,9 @@ export default function IndexPage(props: IndexPageProps) {
           </div>
         </div>
 
-        <div className="text-justify px-8">{props.description}</div>
+        <div className="text-justify px-8 leading-7 text-gray-600">{props.description}</div>
 
-        <div className="text-right py-4 px-8">
+        <div className="text-right p-8">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
             const scheduleDate = dayjs(scheduleInfo.date);
             return (
