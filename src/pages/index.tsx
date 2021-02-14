@@ -48,7 +48,7 @@ export default function IndexPage(props: IndexPageProps) {
   // TODO metaInfoを更新
   const metaInfo = {
     title: d.format(`YYYY年M月D日(${dateInfo.dayJa})`),
-    description: `${props.description.replace('　', '').replace('\n', '')}`,
+    description: `${props.description.replace(/　|\n/g, '')}`,
     keywords: config.keywords,
     siteName: config.name,
     image: `${config.APP_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
