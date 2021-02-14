@@ -38,7 +38,7 @@ export function MonthlyCalendar(props: {
   }
 
   return (
-    <div className="py-1 px-2">
+    <div>
       <div className="text-center py-4">
         {firstDateInfoOfMonth.year}年 {firstDateInfoOfMonth.yearJa} {firstDateInfoOfMonth.month}月{' '}
         {firstDateInfoOfMonth.monthJa}
