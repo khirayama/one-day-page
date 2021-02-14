@@ -47,12 +47,12 @@ export default function IndexPage(props: IndexPageProps) {
 
   // TODO metaInfoを更新
   const metaInfo = {
-    title: d.format(`YYYY年M月D日の日めくりカレンダー`),
-    description: `${dateInfo.dayJa}、${dateInfo.rokuyo}。`,
+    title: d.format(`YYYY年M月D日(${dateInfo.dayJa})`),
+    description: `${props.description.replace('　', '').replace('\n', '')}`,
     keywords: config.keywords,
     siteName: config.name,
     image: `${config.APP_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
-    imageAlt: d.format('YYYY年M月D日の日めくりカレンダー'),
+    imageAlt: d.format(`YYYY年M月D日(${dateInfo.dayJa})`),
     twitter: '@TODO',
   };
 
@@ -131,7 +131,7 @@ export default function IndexPage(props: IndexPageProps) {
           </div>
         </div>
 
-        <div className="text-justify px-8 leading-7 text-gray-600">{props.description}</div>
+        <div className="text-justify px-8 leading-7 text-gray-600 whitespace-pre-wrap">{props.description}</div>
 
         <div className="text-right p-8">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
