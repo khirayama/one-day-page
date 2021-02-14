@@ -1,5 +1,6 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
+import classNames from 'classnames';
 import Head from 'next/head';
 
 import { config } from '../config';
@@ -96,7 +97,15 @@ export default function IndexPage(props: IndexPageProps) {
               </div>
 
               <div className="box-content leading-4 absolute top-1/2 w-full pt-16">
-                <span className="absolute right-1/2 pr-0.5">{dateInfo.dayJa}</span>
+                <span
+                  className={classNames(
+                    'absolute right-1/2 pr-0.5',
+                    { 'text-blue-400': dateInfo.dayJa === '土曜日' },
+                    { 'text-red-400': dateInfo.dayJa === '日曜日' },
+                  )}
+                >
+                  {dateInfo.dayJa.replace('曜日', '曜')}
+                </span>
                 <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
               </div>
 
