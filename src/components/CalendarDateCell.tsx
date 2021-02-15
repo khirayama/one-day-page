@@ -27,7 +27,7 @@ export function CalendarDateCell(props: { date: string; dateInfo: DateInfo; disa
     >
       <div className="flex justify-between">
         <div className="font-bold">{dateInfo.date}</div>
-        <div>{dateInfo.rokuyo}</div>
+        <div>{dateInfo.rokuyo.name}</div>
       </div>
       <ul className="pt-2 pb-4 h-24">
         {dateInfo.schedules.map((schedule: ScheduleInfo, i) => (

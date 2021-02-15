@@ -72,7 +72,7 @@ export function render(
   y = y + styles.fontSize * 9;
   const sizeOfDay = ctx.measureText(dateInfo.dayJa);
   ctx.fillText(dateInfo.dayJa, width / 2 - sizeOfDay.width - styles.fontSize / 4, y);
-  ctx.fillText(dateInfo.rokuyo, width / 2 + styles.fontSize / 4, y);
+  ctx.fillText(dateInfo.rokuyo.name, width / 2 + styles.fontSize / 4, y);
 
   y = y + styles.fontSize;
   for (let i = 0; i < dateInfo.schedules.length; i += 1) {

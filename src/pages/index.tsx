@@ -12,9 +12,28 @@ process.env.TZ = 'Asia/Tokyo';
 
 const fmt = 'YYYY-MM-DD';
 
+function generateDescription(dateInfo: DateInfo, nextSchedules: ScheduleInfo[]): string {
+  let description = `${dateInfo.rokuyo.name}(${dateInfo.rokuyo.kana})は、${dateInfo.rokuyo.note}`;
+
+  nextSchedules.forEach((schedule: ScheduleInfo) => {
+    const diff = dayjs(schedule.date).diff(dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`), 'day');
+    if (diff === 0) {
+      description += `本日の${schedule.name}(${schedule.kana})は、`;
+    } else if (diff === 1) {
+      description += `明日の${schedule.name}(${schedule.kana})は、`;
+    } else if (diff === 2) {
+      description += `明後日の${schedule.name}(${schedule.kana})は、`;
+    } else {
+      description += `${diff}日後の${schedule.name}(${schedule.kana})は、`;
+    }
+
+    description += `${schedule.note}`;
+  });
+  return description;
+}
+
 type IndexPageProps = {
   date: string;
-  description: string;
   currentMonth: string;
   dateInfo: DateInfo;
   nextNationalholiday: ScheduleInfo;
@@ -45,10 +64,12 @@ export default function IndexPage(props: IndexPageProps) {
   const [currentMonth, setCurrentMonth] = React.useState(props.currentMonth);
   const [monthlyCalendar, setMonthlyCalendar] = React.useState(props.monthlyCalendar);
 
+  const description = generateDescription(dateInfo, [nextNationalholiday, nextSolarterm, nextSpecialterm]);
+
   // TODO metaInfoを更新
   const metaInfo = {
     title: d.format(`YYYY年M月D日(${dateInfo.dayJa})`),
-    description: `${props.description}`,
+    description,
     keywords: config.keywords,
     siteName: config.name,
     image: `${config.APP_URL}/api/ogp/${date}.png?timestamp=${Date.now().toString()}`,
@@ -119,7 +140,7 @@ export default function IndexPage(props: IndexPageProps) {
                 >
                   {dateInfo.dayJa.replace('曜日', '曜')}
                 </span>
-                <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo}</span>
+                <span className="absolute left-1/2 pl-0.5">{dateInfo.rokuyo.name}</span>
               </div>
 
               <div className="box-content leading-6 absolute top-1/2 w-full pt-24">
@@ -140,7 +161,7 @@ export default function IndexPage(props: IndexPageProps) {
           </div>
         </div>
 
-        <div className="text-justify px-8 leading-7 text-gray-600 whitespace-pre-wrap">{props.description}</div>
+        <div className="text-justify px-8 leading-7 text-gray-600 whitespace-pre-wrap">{description}</div>
 
         <div className="text-right p-8">
           {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
@@ -239,7 +260,6 @@ export async function getServerSideProps(context: {
   return Promise.all(
     [
       services.fetchDate(date),
-      services.fetchDescription(date),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'nationalholiday' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
@@ -252,11 +272,10 @@ export async function getServerSideProps(context: {
       services.fetchIngredients({ from: month, to: month, limit, labels: 'fish' }),
       services.fetchIngredients({ from: month, to: month, limit, labels: 'seafood' }),
       services.fetchIngredients({ from: month, to: month, limit, labels: 'other' }),
-    ] as [any, any, any, any, any, any, any, any, any, any, any] /* TODO */,
+    ] as [any, any, any, any, any, any, any, any, any, any] /* TODO */,
   ).then(
     ([
       dateInfo,
-      description,
       nationalholidays,
       solarterms,
       specialterms,
@@ -270,7 +289,6 @@ export async function getServerSideProps(context: {
       return {
         props: {
           date: d.format(fmt),
-          description,
           currentMonth,
           dateInfo,
           monthlyCalendar,

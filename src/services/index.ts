@@ -12,6 +12,7 @@ export type ScheduleInfo = {
   labelJa: string;
   name: string;
   kana: string;
+  note: string;
 };
 
 export type DateInfo = {
@@ -24,8 +25,11 @@ export type DateInfo = {
   day: string;
   dayJa: string;
   dayJaKana: string;
-  rokuyo: string;
-  rokuyoKana: string;
+  rokuyo: {
+    name: string;
+    kana: string;
+    note: string;
+  };
   schedules: ScheduleInfo[];
 };
 
