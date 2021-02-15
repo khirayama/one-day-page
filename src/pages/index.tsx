@@ -240,7 +240,7 @@ export async function getServerSideProps(context: {
     [
       services.fetchDate(date),
       services.fetchDescription(date),
-      services.fetchSchedules({ from: frm, to: to, limit: 0, labels: 'nationalholiday' }),
+      services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'nationalholiday' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
       services.fetchCalendar({
