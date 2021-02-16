@@ -14,21 +14,32 @@ const fmt = 'YYYY-MM-DD';
 
 function generateDescription(dateInfo: DateInfo, nextSchedules: ScheduleInfo[]): string {
   let description = `${dateInfo.rokuyo.name}(${dateInfo.rokuyo.kana})は、${dateInfo.rokuyo.note}`;
+  const nationalholiday =
+    dateInfo.schedules.filter((schedule) => schedule.label === 'nationalholiday')[0] ||
+    nextSchedules.filter((schedule) => schedule.label === 'nationalholiday')[0];
+  const solarterm =
+    dateInfo.schedules.filter((schedule) => schedule.label === 'solarterm')[0] ||
+    nextSchedules.filter((schedule) => schedule.label === 'solarterm')[0];
+  const specialterm =
+    dateInfo.schedules.filter((schedule) => schedule.label === 'specialterm')[0] ||
+    nextSchedules.filter((schedule) => schedule.label === 'specialterm')[0];
 
-  nextSchedules.forEach((schedule: ScheduleInfo) => {
-    const diff = dayjs(schedule.date).diff(dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`), 'day');
-    if (diff === 0) {
-      description += `本日の${schedule.name}(${schedule.kana})は、`;
-    } else if (diff === 1) {
-      description += `明日の${schedule.name}(${schedule.kana})は、`;
-    } else if (diff === 2) {
-      description += `明後日の${schedule.name}(${schedule.kana})は、`;
-    } else {
-      description += `${diff}日後の${schedule.name}(${schedule.kana})は、`;
-    }
+  [nationalholiday, solarterm, specialterm]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .forEach((schedule: ScheduleInfo) => {
+      const diff = dayjs(schedule.date).diff(dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`), 'day');
+      if (diff === 0) {
+        description += `本日の${schedule.name}(${schedule.kana})は、`;
+      } else if (diff === 1) {
+        description += `明日の${schedule.name}(${schedule.kana})は、`;
+      } else if (diff === 2) {
+        description += `明後日の${schedule.name}(${schedule.kana})は、`;
+      } else {
+        description += `${diff}日後の${schedule.name}(${schedule.kana})は、`;
+      }
 
-    description += `${schedule.note}`;
-  });
+      description += `${schedule.note}`;
+    });
   return description;
 }
 
