@@ -15,16 +15,20 @@ const fmt = 'YYYY-MM-DD';
 function generateDescription(dateInfo: DateInfo, nextSchedules: ScheduleInfo[]): string {
   let description = `${dateInfo.rokuyo.name}(${dateInfo.rokuyo.kana})は、${dateInfo.rokuyo.note}`;
   const nationalholiday =
-    dateInfo.schedules.filter((schedule) => schedule.label === 'nationalholiday')[0] ||
-    nextSchedules.filter((schedule) => schedule.label === 'nationalholiday')[0];
+    dateInfo.schedules.filter((schedule) => schedule && schedule.label === 'nationalholiday')[0] ||
+    nextSchedules.filter((schedule) => schedule && schedule.label === 'nationalholiday')[0] ||
+    null;
   const solarterm =
-    dateInfo.schedules.filter((schedule) => schedule.label === 'solarterm')[0] ||
-    nextSchedules.filter((schedule) => schedule.label === 'solarterm')[0];
+    dateInfo.schedules.filter((schedule) => schedule && schedule.label === 'solarterm')[0] ||
+    nextSchedules.filter((schedule) => schedule && schedule.label === 'solarterm')[0] ||
+    null;
   const specialterm =
-    dateInfo.schedules.filter((schedule) => schedule.label === 'specialterm')[0] ||
-    nextSchedules.filter((schedule) => schedule.label === 'specialterm')[0];
+    dateInfo.schedules.filter((schedule) => schedule && schedule.label === 'specialterm')[0] ||
+    nextSchedules.filter((schedule) => schedule && schedule.label === 'specialterm')[0] ||
+    null;
 
   [nationalholiday, solarterm, specialterm]
+    .filter((schedule: ScheduleInfo | null) => !!schedule)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .forEach((schedule: ScheduleInfo) => {
       const diff = dayjs(schedule.date).diff(dayjs(`${dateInfo.year}-${dateInfo.month}-${dateInfo.date}`), 'day');
@@ -47,9 +51,9 @@ type IndexPageProps = {
   date: string;
   currentMonth: string;
   dateInfo: DateInfo;
-  nextNationalholiday: ScheduleInfo;
-  nextSolarterm: ScheduleInfo;
-  nextSpecialterm: ScheduleInfo;
+  nextNationalholiday: ScheduleInfo | null;
+  nextSolarterm: ScheduleInfo | null;
+  nextSpecialterm: ScheduleInfo | null;
   monthlyCalendar: DateInfo[];
   seasonalVegetables: IngredientInfo[];
   seasonalFruits: IngredientInfo[];
@@ -175,21 +179,23 @@ export default function IndexPage(props: IndexPageProps) {
         <div className="text-justify px-8 leading-7 text-gray-600 whitespace-pre-wrap">{description}</div>
 
         <div className="text-right p-8">
-          {[nextNationalholiday, nextSolarterm, nextSpecialterm].map((scheduleInfo) => {
-            const scheduleDate = dayjs(scheduleInfo.date);
-            const diff = scheduleDate.diff(date, 'day');
-            const diffText = diff === 2 ? '(明後日)' : diff === 1 ? '(明日)' : `(${diff}日後)`;
+          {[nextNationalholiday, nextSolarterm, nextSpecialterm]
+            .filter((a) => !!a)
+            .map((scheduleInfo) => {
+              const scheduleDate = dayjs(scheduleInfo.date);
+              const diff = scheduleDate.diff(date, 'day');
+              const diffText = diff === 2 ? '(明後日)' : diff === 1 ? '(明日)' : `(${diff}日後)`;
 
-            return (
-              <div key={scheduleInfo.label + scheduleInfo.date}>
-                <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
-                <span>
-                  {scheduleDate.format('M月D日')}
-                  {diffText} {scheduleInfo.name}
-                </span>
-              </div>
-            );
-          })}
+              return (
+                <div key={scheduleInfo.label + scheduleInfo.date}>
+                  <span className="text-gray-400 pr-2">次の{scheduleInfo.labelJa}</span>
+                  <span>
+                    {scheduleDate.format('M月D日')}
+                    {diffText} {scheduleInfo.name}
+                  </span>
+                </div>
+              );
+            })}
         </div>
 
         <div className="py-4 px-8">
@@ -259,7 +265,8 @@ export async function getServerSideProps(context: {
 
   const d = dayjs(date);
   const frm = d.add(1, 'day').format(fmt);
-  const to = d.add(12, 'month').format(fmt);
+  // const to = d.add(12, 'month').format(fmt);
+  const to = config.AVAILABEL_DATE;
 
   const currentMonth = d.format('YYYY-MM');
   const firstDayOfMonth = dayjs(`${currentMonth}-1`);
@@ -297,22 +304,22 @@ export async function getServerSideProps(context: {
       seasonalSeafoods,
       seasonalOthers,
     ]) => {
-      return {
-        props: {
-          date: d.format(fmt),
-          currentMonth,
-          dateInfo,
-          monthlyCalendar,
-          nextNationalholiday: nationalholidays[0],
-          nextSolarterm: solarterms[0],
-          nextSpecialterm: specialterms[0],
-          seasonalVegetables,
-          seasonalFruits,
-          seasonalFishes,
-          seasonalSeafoods,
-          seasonalOthers,
-        },
+      const props = {
+        date: d.format(fmt),
+        currentMonth,
+        dateInfo,
+        monthlyCalendar,
+        nextNationalholiday: nationalholidays[0] || null,
+        nextSolarterm: solarterms[0] || null,
+        nextSpecialterm: specialterms[0] || null,
+        seasonalVegetables,
+        seasonalFruits,
+        seasonalFishes,
+        seasonalSeafoods,
+        seasonalOthers,
       };
+      console.log(props);
+      return { props };
     },
   );
 }
