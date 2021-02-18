@@ -9,6 +9,8 @@ export const config = {
   TRACKING_ID: 'G-D4DH5C9WF6',
   // TRACKING_ID: '',
 
+  AVAILABEL_DATE: '2021-12-31',
+
   // TODO ちゃんと考える
   lang: 'ja',
   name: '日めくりカレンダー',
