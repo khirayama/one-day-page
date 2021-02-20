@@ -11,6 +11,7 @@
     "test": "jest",
     "lint": "eslint '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",
     "lint:fix": "eslint --fix '{src/**/,cli/**/,}*.{ts,tsx,js,jsx,json}'",
+    "build:sitemap": "ts-node bin/generateSitemap.ts",
     "check": "npx npm-check-updates"
   },
   "author": "",
