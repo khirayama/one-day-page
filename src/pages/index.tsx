@@ -318,7 +318,6 @@ export async function getServerSideProps(context: {
         seasonalSeafoods,
         seasonalOthers,
       };
-      console.log(props);
       return { props };
     },
   );
