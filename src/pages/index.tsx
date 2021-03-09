@@ -121,6 +121,11 @@ export default function IndexPage(props: IndexPageProps) {
               gtag('config', '${config.TRACKING_ID}');`,
           }}
         />
+        <script
+          data-ad-client="ca-pub-1858903845445485"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+        ></script>
       </Head>
 
       <div className="max-w-screen-sm mx-auto text-gray-600">
