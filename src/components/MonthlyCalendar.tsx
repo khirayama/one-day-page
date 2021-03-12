@@ -12,7 +12,7 @@ export function MonthlyCalendar(props: {
   onNextMonthButtonClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   const monthlyCalendar = props.monthlyCalendar;
-  const days = monthlyCalendar.slice(0, 7).map((dateInfo: DateInfo) => dateInfo.dayJa);
+  const days = monthlyCalendar.slice(7, 14).map((dateInfo: DateInfo) => dateInfo.dayJa);
   const firstDateInfoOfMonth = monthlyCalendar.filter((dateInfo: DateInfo) => dateInfo.date === '1')[0];
 
   const calendarRows = [];

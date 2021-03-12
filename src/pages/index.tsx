@@ -12,6 +12,44 @@ process.env.TZ = 'Asia/Tokyo';
 
 const fmt = 'YYYY-MM-DD';
 
+function createDummyDateInfo(d: dayjs, diff: number): DateInfo {
+  const tmp = d.add(diff, 'day');
+  return {
+    year: tmp.get('year'),
+    yearJa: '',
+    month: tmp.get('month'),
+    monthJa: '',
+    monthJaKana: '',
+    date: tmp.get('date'),
+    day: '',
+    dayJa: '',
+    dayJaKana: '',
+    rokuyo: {
+      name: '',
+      kana: '',
+      note: '',
+    },
+    schedules: [],
+  };
+}
+
+function fillMonthlyCalendar(monthlyCalendar: DateInfo[]): DateInfo[] {
+  const firstDateInfo = monthlyCalendar[0];
+  const lastDateInfo = monthlyCalendar[monthlyCalendar.length - 1];
+  const firstDay = dayjs(`${firstDateInfo.year}-${firstDateInfo.month}-${firstDateInfo.date}`);
+  const lastDay = dayjs(`${lastDateInfo.year}-${lastDateInfo.month}-${lastDateInfo.date}`);
+
+  for (let i = 1; i <= firstDay.get('day'); i += 1) {
+    monthlyCalendar.unshift(createDummyDateInfo(firstDay, i * -1));
+  }
+
+  for (let i = 1; i <= 6 - lastDay.get('day'); i += 1) {
+    monthlyCalendar.push(createDummyDateInfo(lastDay, i));
+  }
+
+  return monthlyCalendar;
+}
+
 function generateDescription(dateInfo: DateInfo, nextSchedules: ScheduleInfo[]): string {
   let description = `${dateInfo.rokuyo.name}(${dateInfo.rokuyo.kana})は、${dateInfo.rokuyo.note}`;
   const nationalholiday =
@@ -213,12 +251,12 @@ export default function IndexPage(props: IndexPageProps) {
               const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
               services
                 .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+                  from: firstDayOfMonth.format(fmt),
+                  to: lastDayOfMonth.format(fmt),
                 })
                 .then((monthCal: DateInfo[]) => {
                   setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
+                  setMonthlyCalendar(fillMonthlyCalendar(monthCal));
                 });
             }}
             onCurrentMonthButtonClick={() => {
@@ -226,12 +264,14 @@ export default function IndexPage(props: IndexPageProps) {
               const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
               services
                 .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+                  // from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                  // to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+                  from: firstDayOfMonth.format(fmt),
+                  to: lastDayOfMonth.format(fmt),
                 })
                 .then((monthCal: DateInfo[]) => {
                   setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
+                  setMonthlyCalendar(fillMonthlyCalendar(monthCal));
                 });
             }}
             onNextMonthButtonClick={() => {
@@ -240,12 +280,14 @@ export default function IndexPage(props: IndexPageProps) {
               const lastDayOfMonth = firstDayOfMonth.add(1, 'month').add(-1, 'day');
               services
                 .fetchCalendar({
-                  from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-                  to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+                  // from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
+                  // to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+                  from: firstDayOfMonth.format(fmt),
+                  to: lastDayOfMonth.format(fmt),
                 })
                 .then((monthCal: DateInfo[]) => {
                   setCurrentMonth(firstDayOfMonth.format('YYYY-MM'));
-                  setMonthlyCalendar(monthCal);
+                  setMonthlyCalendar(fillMonthlyCalendar(monthCal));
                 });
             }}
           />
@@ -287,8 +329,8 @@ export async function getServerSideProps(context: {
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'solarterm' }),
       services.fetchSchedules({ from: frm, to: to, limit: 1, labels: 'specialterm' }),
       services.fetchCalendar({
-        from: firstDayOfMonth.add(-1 * firstDayOfMonth.get('day'), 'day').format(fmt),
-        to: lastDayOfMonth.add(6 - lastDayOfMonth.get('day'), 'day').format(fmt),
+        from: firstDayOfMonth.format(fmt),
+        to: lastDayOfMonth.format(fmt),
       }),
       services.fetchIngredients({ from: month, to: month, limit, labels: 'vegetable' }),
       services.fetchIngredients({ from: month, to: month, limit, labels: 'fruit' }),
@@ -313,7 +355,7 @@ export async function getServerSideProps(context: {
         date: d.format(fmt),
         currentMonth,
         dateInfo,
-        monthlyCalendar,
+        monthlyCalendar: fillMonthlyCalendar(monthlyCalendar),
         nextNationalholiday: nationalholidays[0] || null,
         nextSolarterm: solarterms[0] || null,
         nextSpecialterm: specialterms[0] || null,
